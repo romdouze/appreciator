@@ -1,0 +1,42 @@
+\.orig$
+\.orig\..*$
+\.chg\..*$
+\.rej$
+\.conflict\~$
+syntax: glob
+.~lock.Appréciations 2NDE 3-Trimestre 1 .xls#
+.~lock.Appreciations.xls#
+Appréciations 2NDE 3-Trimestre 1-- .xls
+Appréciations 2NDE 3-Trimestre 1 .xls
+build.xml
+build/built-jar.properties
+build/classes/ngr/KiKi/appreciator/JFrameMain$1.class
+build/classes/ngr/KiKi/appreciator/JFrameMain$2.class
+build/classes/ngr/KiKi/appreciator/JFrameMain$3.class
+build/classes/ngr/KiKi/appreciator/JFrameMain$4.class
+build/classes/ngr/KiKi/appreciator/JFrameMain.class
+build/classes/ngr/KiKi/appreciator/JFrameMain_old$1.class
+build/classes/ngr/KiKi/appreciator/JFrameMain_old$2.class
+build/classes/ngr/KiKi/appreciator/JFrameMain_old$Appreciation$1.class
+build/classes/ngr/KiKi/appreciator/JFrameMain_old$Appreciation.class
+build/classes/ngr/KiKi/appreciator/JFrameMain_old.class
+build/classes/ngr/KiKi/appreciator/data/StringUtils.class
+build/classes/ngr/KiKi/appreciator/data/Student.class
+build/classes/ngr/KiKi/appreciator/data/XLSHelper$Indices.class
+build/classes/ngr/KiKi/appreciator/data/XLSHelper.class
+build/classes/ngr/KiKi/appreciator/resources/ic_action_copy.png
+build/classes/ngr/KiKi/appreciator/view/Appreciation.class
+build/classes/ngr/KiKi/appreciator/view/AppreciationCellRenderer.class
+build/classes/ngr/KiKi/appreciator/view/AppreciationRenderer.class
+build/classes/ngr/KiKi/appreciator/view/JPanelSingleView$1.class
+build/classes/ngr/KiKi/appreciator/view/JPanelSingleView$2.class
+build/classes/ngr/KiKi/appreciator/view/JPanelSingleView.class
+build/classes/ngr/KiKi/appreciator/view/JPanelTabbedView$1.class
+build/classes/ngr/KiKi/appreciator/view/JPanelTabbedView.class
+nbproject/build-impl.xml
+nbproject/genfiles.properties
+nbproject/private/config.properties
+nbproject/private/private.properties
+nbproject/private/private.xml
+nbproject/project.properties
+nbproject/project.xml
