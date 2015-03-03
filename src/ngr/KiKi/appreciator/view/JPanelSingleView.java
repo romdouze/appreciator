@@ -122,9 +122,6 @@ public class JPanelSingleView extends javax.swing.JPanel
 			public void run ()
 			{
 				jPanelList.add (stuff, new CC ().wrap ().growX ());
-				stuff.invalidate ();
-				stuff.repaint ();
-
 			}
 
 		}
