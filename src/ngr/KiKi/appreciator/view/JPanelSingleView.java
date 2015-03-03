@@ -16,6 +16,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
 import ngr.KiKi.appreciator.JFrameMain;
@@ -106,9 +107,32 @@ public class JPanelSingleView extends javax.swing.JPanel
 		jPanelList = new JPanel ();
 		jPanelList.setLayout (new MigLayout ("fillx"));
 //		jPanelList.setBorder (new LineBorder (Color.RED));
+
+		class AsynchronousLoad implements Runnable
+		{
+
+			private final AppreciationRenderer stuff;
+
+			public AsynchronousLoad (AppreciationRenderer ar)
+			{
+				stuff = ar;
+			}
+
+			@Override
+			public void run ()
+			{
+				jPanelList.add (stuff, new CC ().wrap ().growX ());
+				stuff.invalidate ();
+				stuff.repaint ();
+
+			}
+
+		}
+
 		parent.getAppreciations ().stream ().forEach ((a) ->
 		{
-			jPanelList.add (new AppreciationRenderer (this, a, student), new CC ().wrap ().growX ());
+			AppreciationRenderer ar = new AppreciationRenderer (this, a, student);
+			SwingUtilities.invokeLater (new AsynchronousLoad (ar));
 		});
 
 		JPanel northOnlyPanel = new JPanel ();
@@ -117,6 +141,7 @@ public class JPanelSingleView extends javax.swing.JPanel
 		northOnlyPanel.add (jPanelList, BorderLayout.NORTH);
 
 		JScrollPane jScrollPaneList = new JScrollPane (jPanelList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		jScrollPaneList.getVerticalScrollBar ().setValue (0);
 
 		jPanelListHolder.setLayout (new BorderLayout ());
 		jPanelListHolder.add (jScrollPaneList, BorderLayout.CENTER);

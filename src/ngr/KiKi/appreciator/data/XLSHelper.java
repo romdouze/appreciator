@@ -176,12 +176,10 @@ public class XLSHelper
 		{
 			Row r = sheet.getRow (Indices.TITLE_ROW);
 			int i;
-			for (i = 0; i < Indices.QUARTER_COLUMN.length && r.getCell (Indices.QUARTER_COLUMN[i]).getStringCellValue ().startsWith (Indices.QUARTER_COLUMN_TAG); i++)
-			{
-			}
+			for (i = 0; i < Indices.QUARTER_COLUMN.length && r.getCell (Indices.QUARTER_COLUMN[i]).getStringCellValue ().startsWith (Indices.QUARTER_COLUMN_TAG); i++);
 			nbNotes += i;
-			Indices.MEAN_COLUMN += 2 * i - 2;
-			Indices.APPRECIATION_COLUMN += 2 * i - 2;
+			Indices.MEAN_COLUMN = Indices.MEAN_COLUMN_BASE + 2 * i - 2;
+			Indices.APPRECIATION_COLUMN = Indices.APPRECIATION_COLUMN_BASE + 2 * i - 2;
 		}
 	}
 
@@ -280,6 +278,8 @@ public class XLSHelper
 		{
 			3, 5, 7
 		};
+		public static int MEAN_COLUMN_BASE = 5;
+		public static int APPRECIATION_COLUMN_BASE = 7;
 		public static int MEAN_COLUMN = 5;
 		public static int APPRECIATION_COLUMN = 7;
 
