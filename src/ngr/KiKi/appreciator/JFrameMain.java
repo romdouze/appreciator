@@ -260,8 +260,7 @@ public class JFrameMain extends javax.swing.JFrame
 		if (!book.openBook (file))
 			return;
 
-		for (int i = 0; i < book.getSize (); i++)
-			list.add (book.getStudent (i));
+		list = book.loadStudents ();
 
 		if (!arrows)
 			addArrows ();

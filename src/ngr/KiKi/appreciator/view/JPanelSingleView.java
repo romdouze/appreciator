@@ -12,11 +12,10 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.border.LineBorder;
+import javax.swing.JTextField;
 import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
 import ngr.KiKi.appreciator.JFrameMain;
@@ -35,6 +34,7 @@ public class JPanelSingleView extends javax.swing.JPanel
 
 	private JPanel jPanelList;
 	private final JFrameMain parent;
+	private JTextField[] jTFNotes;
 
 	/**
 	 * Creates new form JPanelSingleView
@@ -50,9 +50,17 @@ public class JPanelSingleView extends javax.swing.JPanel
 
 	private void init ()
 	{
+		jTFNotes = new JTextField[]
+		{
+			jTextFieldT1, jTextFieldT2, jTextFieldT3
+		};
+
 		jLabelName.setText (student.getfullname ());
 		jTextFieldMean.setText (student.getMean ().toString ());
-		jTextFieldT1.setText (student.getNotes ()[0].toString ());
+
+		for (int i = 0; i < student.getNotes ().length; i++)
+			jTFNotes[i].setText (student.getNotes ()[i].toString ());
+
 		jTextAreaPrevious.setText (student.getPrevious ());
 		jTextAreaPrevious.addMouseListener (new MouseAdapter ()
 		{

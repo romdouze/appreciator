@@ -56,6 +56,8 @@ public class XLSHelper
 
 		sheet = book.getSheet (Indices.SHEET);
 
+		initIndices ();
+
 		return sheet != null;
 	}
 
@@ -145,7 +147,7 @@ public class XLSHelper
 		return list;
 	}
 
-	public int getSize ()
+	private int getSize ()
 	{
 		if (sheet == null)
 			return 0;
@@ -159,21 +161,56 @@ public class XLSHelper
 		return size;
 	}
 
+	public int getNbNotes ()
+	{
+		return nbNotes;
+	}
+
+	private void initIndices ()
+	{
+		if (sheet == null)
+			return;
+
+		nbNotes = 0;
+		if (rowExists (sheet, Indices.TITLE_ROW))
+		{
+			Row r = sheet.getRow (Indices.TITLE_ROW);
+			int i;
+			for (i = 0; i < Indices.QUARTER_COLUMN.length && r.getCell (Indices.QUARTER_COLUMN[i]).getStringCellValue ().startsWith (Indices.QUARTER_COLUMN_TAG); i++)
+			{
+			}
+			nbNotes += i;
+			Indices.MEAN_COLUMN += 2 * i - 2;
+			Indices.APPRECIATION_COLUMN += 2 * i - 2;
+		}
+	}
+
 	public Student getStudent (int i)
 	{
 		return getStudent (i, sheet);
 	}
 
-	private Student getStudent (int i, Sheet sheet)
+	public ArrayList<Student> loadStudents ()
 	{
+		ArrayList<Student> list = new ArrayList<> ();
+		int size = getSize ();
 
-		if (sheet == null || !rowExists (sheet, i))
+		for (int i = 0; i < size; i++)
+			list.add (getStudent (i, sheet));
+
+		return list;
+	}
+
+	private Student getStudent (int id, Sheet sheet)
+	{
+		if (sheet == null || !rowExists (sheet, id))
 			return null;
-		Row r = sheet.getRow (i + Indices.FIRST_ROW);
-		Student student = new Student (i, r.getCell (Indices.STUDENT_COLUMN).getStringCellValue (), new Double[]
-		{
-			r.getCell (Indices.QUARTER_COLUMN[0]).getNumericCellValue ()
-		}, r.getCell (Indices.MEAN_COLUMN).getNumericCellValue (), r.getCell (Indices.APPRECIATION_COLUMN).getStringCellValue ());
+		Row r = sheet.getRow (id + Indices.FIRST_ROW);
+		Double[] notes = new Double[nbNotes];
+		for (int i = 0; i < nbNotes; i++)
+			notes[i] = r.getCell (Indices.QUARTER_COLUMN[i]).getNumericCellValue ();
+
+		Student student = new Student (id, r.getCell (Indices.STUDENT_COLUMN).getStringCellValue (), notes, r.getCell (Indices.MEAN_COLUMN).getNumericCellValue (), r.getCell (Indices.APPRECIATION_COLUMN).getStringCellValue ());
 
 		return student;
 	}
@@ -187,18 +224,17 @@ public class XLSHelper
 		r.getCell (Indices.APPRECIATION_COLUMN).setCellValue (s.getAppreciation ());
 	}
 
-	public void writeStudent (Student s)
-	{
-		if (sheet == null || !rowExists (sheet, s.getId () + Indices.FIRST_ROW))
-			return;
-
-		Row r = sheet.getRow (s.getId () + Indices.FIRST_ROW);
-		r.getCell (Indices.STUDENT_COLUMN).setCellValue (s.getfullname ());
-		r.getCell (Indices.QUARTER_COLUMN[0]).setCellValue (s.getNotes ()[0]);
-		r.getCell (Indices.MEAN_COLUMN).setCellValue (s.getMean ());
-		r.getCell (Indices.APPRECIATION_COLUMN).setCellValue (s.getAppreciation ());
-	}
-
+//	public void writeStudent (Student s)
+//	{
+//		if (sheet == null || !rowExists (sheet, s.getId () + Indices.FIRST_ROW))
+//			return;
+//
+//		Row r = sheet.getRow (s.getId () + Indices.FIRST_ROW);
+//		r.getCell (Indices.STUDENT_COLUMN).setCellValue (s.getfullname ());
+//		r.getCell (Indices.QUARTER_COLUMN[0]).setCellValue (s.getNotes ()[0]);
+//		r.getCell (Indices.MEAN_COLUMN).setCellValue (s.getMean ());
+//		r.getCell (Indices.APPRECIATION_COLUMN).setCellValue (s.getAppreciation ());
+//	}
 	public void writeBook ()
 	{
 		try (FileOutputStream f = new FileOutputStream (file))
@@ -242,7 +278,7 @@ public class XLSHelper
 		public static int STUDENT_COLUMN = 1;
 		public static int[] QUARTER_COLUMN =
 		{
-			3
+			3, 5, 7
 		};
 		public static int MEAN_COLUMN = 5;
 		public static int APPRECIATION_COLUMN = 7;
