@@ -193,14 +193,36 @@ public class XLSHelper
 			return;
 
 		nbNotes = 0;
+		Indices.MEAN_COLUMN = 0;
+		Indices.APPRECIATION_COLUMN = 0;
 		if (rowExists (sheet, Indices.TITLE_ROW))
 		{
 			Row r = sheet.getRow (Indices.TITLE_ROW);
 			int i;
-			for (i = 0; i < Indices.QUARTER_COLUMN.length && r.getCell (Indices.QUARTER_COLUMN[i]).getStringCellValue ().startsWith (Indices.QUARTER_COLUMN_TAG); i++);
-			nbNotes += i;
-			Indices.MEAN_COLUMN = Indices.MEAN_COLUMN_BASE + 2 * i - 2;
-			Indices.APPRECIATION_COLUMN = Indices.APPRECIATION_COLUMN_BASE + 2 * i - 2;
+			for (i = 0; i < 20; i++)
+				if (r.getCell (i) != null && r.getCell (i).getCellType () == Cell.CELL_TYPE_STRING)
+				{
+					String s = r.getCell (i).getStringCellValue ();
+					if (s.equals (Indices.T1_TAG))
+					{
+						nbNotes++;
+						Indices.QUARTER_COLUMN[0] = i;
+					}
+					else if (s.equals (Indices.T2_TAG))
+					{
+						nbNotes++;
+						Indices.QUARTER_COLUMN[1] = i;
+					}
+					else if (s.equals (Indices.T3_TAG))
+					{
+						nbNotes++;
+						Indices.QUARTER_COLUMN[2] = i;
+					}
+					else if (s.equals (Indices.MEAN_COLUMN_TAG))
+						Indices.MEAN_COLUMN = i;
+					else if (s.equals (Indices.APPRECIATION_COLUMN_TAG))
+						Indices.APPRECIATION_COLUMN = i;
+				}
 		}
 	}
 
@@ -291,6 +313,9 @@ public class XLSHelper
 		public final static String SHEET = "Appreciations";
 		public final static String STUDENT_COLUMN_TAG = "Elèves";
 		public final static String QUARTER_COLUMN_TAG = "T";
+		public final static String T1_TAG = "T1";
+		public final static String T2_TAG = "T2";
+		public final static String T3_TAG = "T3";
 		public final static String MEAN_COLUMN_TAG = "A";
 		public final static String APPRECIATION_COLUMN_TAG = "Appréciations";
 
@@ -299,10 +324,9 @@ public class XLSHelper
 		{
 			3, 5, 7
 		};
-		public static int MEAN_COLUMN_BASE = 5;
-		public static int APPRECIATION_COLUMN_BASE = 7;
-		public static int MEAN_COLUMN = 5;
-		public static int APPRECIATION_COLUMN = 7;
+
+		public static int MEAN_COLUMN = 0;
+		public static int APPRECIATION_COLUMN = 0;
 
 		public static int APPRECIATIONS_FILE_COLUMN = 0;
 		public static String APPRECIATIONS_FILE_SHEET = "Appréciations";
