@@ -48,6 +48,11 @@ public class AppreciationRenderer extends JTextArea implements MouseListener
 		appreciation = a;
 	}
 
+	public Appreciation getAppreciation ()
+	{
+		return appreciation;
+	}
+
 	@Override
 	public void mouseClicked (MouseEvent me)
 	{

@@ -16,9 +16,15 @@ import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import net.miginfocom.layout.CC;
+import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
 import ngr.KiKi.appreciator.JFrameMain;
 import ngr.KiKi.appreciator.data.Student;
@@ -34,6 +40,7 @@ public class JPanelSingleView extends javax.swing.JPanel
 	private final Student student;
 //	private ArrayList<Appreciation> list;
 	private DefaultListModel model;
+	private ArrayList<AppreciationRenderer> arList;
 
 	private JPanel jPanelList;
 	private final JFrameMain parent;
@@ -53,6 +60,8 @@ public class JPanelSingleView extends javax.swing.JPanel
 
 	private void init ()
 	{
+		arList = new ArrayList<> ();
+
 		jTFNotes = new JTextField[]
 		{
 			jTextFieldT1, jTextFieldT2, jTextFieldT3
@@ -63,6 +72,42 @@ public class JPanelSingleView extends javax.swing.JPanel
 
 		for (int i = 0; i < student.getNotes ().length; i++)
 			jTFNotes[i].setText (student.getNotes ()[i].toString ());
+
+		DocumentListener docListener = new DocumentListener ()
+		{
+
+			@Override
+			public void insertUpdate (DocumentEvent de)
+			{
+				updateList ();
+			}
+
+			@Override
+			public void removeUpdate (DocumentEvent de)
+			{
+				updateList ();
+			}
+
+			@Override
+			public void changedUpdate (DocumentEvent de)
+			{
+				updateList ();
+			}
+		};
+
+		jTextFieldT1.getDocument ().addDocumentListener (docListener);
+		jTextFieldT2.getDocument ().addDocumentListener (docListener);
+		jTextFieldT3.getDocument ().addDocumentListener (docListener);
+		jTextFieldMean.getDocument ().addDocumentListener (docListener);
+
+		ChangeListener sliderListener = (ChangeEvent ce) ->
+		{
+			if (!((JSlider) ce.getSource ()).getValueIsAdjusting ())
+				updateList ();
+		};
+
+		jSliderBehaviour.addChangeListener (sliderListener);
+		jSliderFocus.addChangeListener (sliderListener);
 
 		jTextAreaPrevious.setText (student.getPrevious ());
 		jTextAreaPrevious.addMouseListener (new MouseAdapter ()
@@ -93,24 +138,11 @@ public class JPanelSingleView extends javax.swing.JPanel
 		if (student.getPrevious ().isEmpty ())
 			jPanelPrevious.setVisible (false);
 
-//		list = new ArrayList<> ();
-//		list.add (new Appreciation ("Y manque de méthode, cela se voit dans ses contrôles, mais ce doit être le cas pour le travail à la maison. Il faut s'organiser pour un travail efficace."));
-//		list.add (new Appreciation ("X a beaucoup de difficultés à suivre le rythme, elle semble perdue. Peut-être un problème d'organisation du travail ? Il faut essayer de se relancer avec les prochains chapitres et le début du deuxième trimestre."));
-//		list.add (new Appreciation ("Y manque de méthode, cela se voit dans ses contrôles, mais ce doit être le cas pour le travail à la maison. Il faut s'organiser pour un travail efficace."));
-//		list.add (new Appreciation ("Y manque de méthode, cela se voit dans ses contrôles, mais ce doit être le cas pour le travail à la maison. Il faut s'organiser pour un travail efficace."));
-//		list.add (new Appreciation ("Y manque de méthode, cela se voit dans ses contrôles, mais ce doit être le cas pour le travail à la maison. Il faut s'organiser pour un travail efficace."));
-//		list.add (new Appreciation ("Y manque de méthode, cela se voit dans ses contrôles, mais ce doit être le cas pour le travail à la maison. Il faut s'organiser pour un travail efficace."));
-//		list.add (new Appreciation ("Y manque de méthode, cela se voit dans ses contrôles, mais ce doit être le cas pour le travail à la maison. Il faut s'organiser pour un travail efficace."));
-//		list.add (new Appreciation ("Y manque de méthode, cela se voit dans ses contrôles, mais ce doit être le cas pour le travail à la maison. Il faut s'organiser pour un travail efficace."));
-//		list.add (new Appreciation ("Y manque de méthode, cela se voit dans ses contrôles, mais ce doit être le cas pour le travail à la maison. Il faut s'organiser pour un travail efficace."));
-//		list.add (new Appreciation ("Y manque de méthode, cela se voit dans ses contrôles, mais ce doit être le cas pour le travail à la maison. Il faut s'organiser pour un travail efficace."));
-//		list.add (new Appreciation ("Y manque de méthode, cela se voit dans ses contrôles, mais ce doit être le cas pour le travail à la maison. Il faut s'organiser pour un travail efficace."));
-//		list.add (new Appreciation ("Y manque de méthode, cela se voit dans ses contrôles, mais ce doit être le cas pour le travail à la maison. Il faut s'organiser pour un travail efficace."));
 		jPanelList = new JPanel ();
-		jPanelList.setLayout (new MigLayout ("fillx"));
+		jPanelList.setLayout (new MigLayout (new LC ().fillX ().hideMode (3)));
 //		jPanelList.setBorder (new LineBorder (Color.RED));
 
-		updateList ();
+		initList ();
 
 		JPanel northOnlyPanel = new JPanel ();
 		northOnlyPanel.setLayout (new BorderLayout ());
@@ -122,33 +154,6 @@ public class JPanelSingleView extends javax.swing.JPanel
 
 		jPanelListHolder.setLayout (new BorderLayout ());
 		jPanelListHolder.add (jScrollPaneList, BorderLayout.CENTER);
-
-//		jListAppreciations.setModel (model = new DefaultListModel ());
-//		model.addElement (new Appreciation ("Y manque de méthode, cela se voit dans ses contrôles, mais ce doit être le cas pour le travail à la maison. Il faut s'organiser pour un travail efficace.", student));
-//		model.addElement (new Appreciation ("X a beaucoup de difficultés à suivre le rythme, elle semble perdue. Peut-être un problème d'organisation du travail ? Il faut essayer de se relancer avec les prochains chapitres et le début du deuxième trimestre.", student));
-//
-//		jListAppreciations.addMouseListener (new MouseAdapter ()
-//		{
-//			@Override
-//			public void mouseClicked (MouseEvent evt)
-//			{
-//				if (evt.getButton () == MouseEvent.BUTTON1)
-//				{
-//					int index = jListAppreciations.locationToIndex (evt.getPoint ());
-//					if (index >= 0)
-//					{
-//						String text = ((Appreciation) model.getElementAt (index)).getText ();
-//						StringSelection ss = new StringSelection (text);
-//						Clipboard clpbrd = Toolkit.getDefaultToolkit ().getSystemClipboard ();
-//						clpbrd.setContents (ss, null);
-//						jTextAreaCustom.setText (text);
-//						JFrameMain.setStatus (text);
-//					}
-//				}
-//			}
-//		});
-//
-//		jListAppreciations.setCellRenderer (new AppreciationCellRenderer ());
 	}
 
 	public void setCustomAreaText (String s)
@@ -156,37 +161,35 @@ public class JPanelSingleView extends javax.swing.JPanel
 		jTextAreaCustom.setText (s);
 	}
 
-	private void updateList ()
+	private void initList ()
 	{
 		jPanelList.removeAll ();
-
-		filterList ().stream ().forEach ((a) ->
-		{
-			AppreciationRenderer ar = new AppreciationRenderer (this, a, student);
-			SwingUtilities.invokeLater (new AsynchronousLoad (ar));
-		});
-	}
-
-	private ArrayList<Appreciation> filterList ()
-	{
-		ArrayList<Appreciation> filtered = new ArrayList<> ();
-
+		arList.clear ();
 		parent.getAppreciations ().stream ().forEach ((a) ->
 		{
-			if (isWithin (a))
-				filtered.add (a);
+			AppreciationRenderer ar = new AppreciationRenderer (this, a, student);
+			arList.add (ar);
+			SwingUtilities.invokeLater (new AsynchronousLoad (ar));
 		});
+		updateList ();
+	}
 
-		return filtered;
+	private void updateList ()
+	{
+		arList.stream ().forEach ((ar) ->
+		{
+			ar.setVisible (isWithin (ar.getAppreciation ()));
+		});
 	}
 
 	private boolean isWithin (Appreciation a)
 	{
 		boolean within = true;
+
 		for (int i = 0; i < student.getNotes ().length && within == true; i++)
-			if (!a.isWithin (XLSHelper.Indices.APPRECIATIONS_FILE_T[i], student.getNotes ()[i]))
+			if (!a.isWithin (XLSHelper.Indices.APPRECIATIONS_FILE_T[i], Double.valueOf (jTFNotes[i].getText ().isEmpty () ? "0" : jTFNotes[i].getText ())))
 				within = false;
-		if (!a.isWithin (XLSHelper.Indices.APPRECIATIONS_FILE_A, student.getMean ()))
+		if (!a.isWithin (XLSHelper.Indices.APPRECIATIONS_FILE_A, Double.valueOf (jTextFieldMean.getText ())))
 			within = false;
 		if (!a.isWithin (XLSHelper.Indices.APPRECIATIONS_FILE_C, Double.valueOf (jSliderBehaviour.getValue ())))
 			within = false;
