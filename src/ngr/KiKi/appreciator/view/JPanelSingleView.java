@@ -12,6 +12,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -21,6 +22,7 @@ import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
 import ngr.KiKi.appreciator.JFrameMain;
 import ngr.KiKi.appreciator.data.Student;
+import ngr.KiKi.appreciator.data.XLSHelper;
 
 /**
  *
@@ -108,29 +110,7 @@ public class JPanelSingleView extends javax.swing.JPanel
 		jPanelList.setLayout (new MigLayout ("fillx"));
 //		jPanelList.setBorder (new LineBorder (Color.RED));
 
-		class AsynchronousLoad implements Runnable
-		{
-
-			private final AppreciationRenderer stuff;
-
-			public AsynchronousLoad (AppreciationRenderer ar)
-			{
-				stuff = ar;
-			}
-
-			@Override
-			public void run ()
-			{
-				jPanelList.add (stuff, new CC ().wrap ().growX ());
-			}
-
-		}
-
-		parent.getAppreciations ().stream ().forEach ((a) ->
-		{
-			AppreciationRenderer ar = new AppreciationRenderer (this, a, student);
-			SwingUtilities.invokeLater (new AsynchronousLoad (ar));
-		});
+		updateList ();
 
 		JPanel northOnlyPanel = new JPanel ();
 		northOnlyPanel.setLayout (new BorderLayout ());
@@ -176,10 +156,61 @@ public class JPanelSingleView extends javax.swing.JPanel
 		jTextAreaCustom.setText (s);
 	}
 
-	private void filterList ()
+	private void updateList ()
 	{
-		int behaviour = jSliderBehaviour.getValue ();
-		int focus = jSliderFocus.getValue ();
+		jPanelList.removeAll ();
+
+		filterList ().stream ().forEach ((a) ->
+		{
+			AppreciationRenderer ar = new AppreciationRenderer (this, a, student);
+			SwingUtilities.invokeLater (new AsynchronousLoad (ar));
+		});
+	}
+
+	private ArrayList<Appreciation> filterList ()
+	{
+		ArrayList<Appreciation> filtered = new ArrayList<> ();
+
+		parent.getAppreciations ().stream ().forEach ((a) ->
+		{
+			if (isWithin (a))
+				filtered.add (a);
+		});
+
+		return filtered;
+	}
+
+	private boolean isWithin (Appreciation a)
+	{
+		boolean within = true;
+		for (int i = 0; i < student.getNotes ().length && within == true; i++)
+			if (!a.isWithin (XLSHelper.Indices.APPRECIATIONS_FILE_T[i], student.getNotes ()[i]))
+				within = false;
+		if (!a.isWithin (XLSHelper.Indices.APPRECIATIONS_FILE_A, student.getMean ()))
+			within = false;
+		if (!a.isWithin (XLSHelper.Indices.APPRECIATIONS_FILE_C, Double.valueOf (jSliderBehaviour.getValue ())))
+			within = false;
+		if (!a.isWithin (XLSHelper.Indices.APPRECIATIONS_FILE_I, Double.valueOf (jSliderFocus.getValue ())))
+			within = false;
+
+		return within;
+	}
+
+	private class AsynchronousLoad implements Runnable
+	{
+
+		private final AppreciationRenderer stuff;
+
+		public AsynchronousLoad (AppreciationRenderer ar)
+		{
+			stuff = ar;
+		}
+
+		@Override
+		public void run ()
+		{
+			jPanelList.add (stuff, new CC ().wrap ().growX ());
+		}
 
 	}
 

@@ -140,7 +140,28 @@ public class XLSHelper
 				{
 					String s = c.getStringCellValue ();
 					if (s != null && s.startsWith ("  * "))
-						list.add (new Appreciation (StringUtils.removeLead (s)));
+					{
+						Appreciation a = new Appreciation (StringUtils.removeLead (s));
+						Double T1inf = r.getCell (Indices.APPRECIATIONS_FILE_T[0]) != null && r.getCell (Indices.APPRECIATIONS_FILE_T[0]).getCellType () == Cell.CELL_TYPE_NUMERIC ? r.getCell (Indices.APPRECIATIONS_FILE_T[0]).getNumericCellValue () : 0.;
+						Double T1sup = r.getCell (Indices.APPRECIATIONS_FILE_T[0] + 1) != null && r.getCell (Indices.APPRECIATIONS_FILE_T[0] + 1).getCellType () == Cell.CELL_TYPE_NUMERIC ? r.getCell (Indices.APPRECIATIONS_FILE_T[0] + 1).getNumericCellValue () : 20.;
+						Double T2inf = r.getCell (Indices.APPRECIATIONS_FILE_T[1]) != null && r.getCell (Indices.APPRECIATIONS_FILE_T[1]).getCellType () == Cell.CELL_TYPE_NUMERIC ? r.getCell (Indices.APPRECIATIONS_FILE_T[1]).getNumericCellValue () : 0.;
+						Double T2sup = r.getCell (Indices.APPRECIATIONS_FILE_T[1] + 1) != null && r.getCell (Indices.APPRECIATIONS_FILE_T[1] + 1).getCellType () == Cell.CELL_TYPE_NUMERIC ? r.getCell (Indices.APPRECIATIONS_FILE_T[1] + 1).getNumericCellValue () : 20.;
+						Double T3inf = r.getCell (Indices.APPRECIATIONS_FILE_T[2]) != null && r.getCell (Indices.APPRECIATIONS_FILE_T[2]).getCellType () == Cell.CELL_TYPE_NUMERIC ? r.getCell (Indices.APPRECIATIONS_FILE_T[2]).getNumericCellValue () : 0.;
+						Double T3sup = r.getCell (Indices.APPRECIATIONS_FILE_T[2] + 2) != null && r.getCell (Indices.APPRECIATIONS_FILE_T[2] + 1).getCellType () == Cell.CELL_TYPE_NUMERIC ? r.getCell (Indices.APPRECIATIONS_FILE_T[2] + 1).getNumericCellValue () : 20.;
+						Double Ainf = r.getCell (Indices.APPRECIATIONS_FILE_A) != null && r.getCell (Indices.APPRECIATIONS_FILE_A).getCellType () == Cell.CELL_TYPE_NUMERIC ? r.getCell (Indices.APPRECIATIONS_FILE_A).getNumericCellValue () : 0.;
+						Double Asup = r.getCell (Indices.APPRECIATIONS_FILE_A + 1) != null && r.getCell (Indices.APPRECIATIONS_FILE_A + 1).getCellType () == Cell.CELL_TYPE_NUMERIC ? r.getCell (Indices.APPRECIATIONS_FILE_A + 1).getNumericCellValue () : 20.;
+						Double Cinf = r.getCell (Indices.APPRECIATIONS_FILE_C) != null && r.getCell (Indices.APPRECIATIONS_FILE_C).getCellType () == Cell.CELL_TYPE_NUMERIC ? r.getCell (Indices.APPRECIATIONS_FILE_C).getNumericCellValue () : 0.;
+						Double Csup = r.getCell (Indices.APPRECIATIONS_FILE_C + 1) != null && r.getCell (Indices.APPRECIATIONS_FILE_C + 1).getCellType () == Cell.CELL_TYPE_NUMERIC ? r.getCell (Indices.APPRECIATIONS_FILE_C + 1).getNumericCellValue () : 20.;
+						Double Iinf = r.getCell (Indices.APPRECIATIONS_FILE_I) != null && r.getCell (Indices.APPRECIATIONS_FILE_I).getCellType () == Cell.CELL_TYPE_NUMERIC ? r.getCell (Indices.APPRECIATIONS_FILE_I).getNumericCellValue () : 0.;
+						Double Isup = r.getCell (Indices.APPRECIATIONS_FILE_I + 1) != null && r.getCell (Indices.APPRECIATIONS_FILE_I + 1).getCellType () == Cell.CELL_TYPE_NUMERIC ? r.getCell (Indices.APPRECIATIONS_FILE_I + 1).getNumericCellValue () : 20.;
+						a.setConstraint (Indices.APPRECIATIONS_FILE_T[0], T1inf, T1sup);
+						a.setConstraint (Indices.APPRECIATIONS_FILE_T[1], T2inf, T2sup);
+						a.setConstraint (Indices.APPRECIATIONS_FILE_T[2], T3inf, T3sup);
+						a.setConstraint (Indices.APPRECIATIONS_FILE_A, Ainf, Asup);
+						a.setConstraint (Indices.APPRECIATIONS_FILE_C, Cinf, Csup);
+						a.setConstraint (Indices.APPRECIATIONS_FILE_I, Iinf, Isup);
+						list.add (a);
+					}
 				}
 			}
 
@@ -264,7 +285,7 @@ public class XLSHelper
 		return file;
 	}
 
-	private static class Indices
+	public static class Indices
 	{
 
 		public final static String SHEET = "Appreciations";
@@ -285,6 +306,13 @@ public class XLSHelper
 
 		public static int APPRECIATIONS_FILE_COLUMN = 0;
 		public static String APPRECIATIONS_FILE_SHEET = "Appréciations";
+		public static int[] APPRECIATIONS_FILE_T =
+		{
+			2, 4, 6
+		};
+		public static int APPRECIATIONS_FILE_A = 8;
+		public static int APPRECIATIONS_FILE_C = 10;
+		public static int APPRECIATIONS_FILE_I = 12;
 
 		public final static int TITLE_ROW = 1;
 		public final static int FIRST_ROW = 3;
