@@ -7,9 +7,6 @@ package ngr.KiKi.appreciator.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -28,6 +25,7 @@ import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
 import ngr.KiKi.appreciator.JFrameMain;
 import ngr.KiKi.appreciator.data.Student;
+import ngr.KiKi.appreciator.data.Utils;
 import ngr.KiKi.appreciator.data.XLSHelper;
 
 /**
@@ -128,11 +126,9 @@ public class JPanelSingleView extends javax.swing.JPanel
 			public void mouseClicked (MouseEvent evt)
 			{
 				String text = jTextAreaPrevious.getText ();
-				StringSelection ss = new StringSelection (text);
-				Clipboard clpbrd = Toolkit.getDefaultToolkit ().getSystemClipboard ();
-				clpbrd.setContents (ss, null);
+				Utils.sendToClipboard (text);
 				jTextAreaCustom.setText (text);
-				JFrameMain.setStatus (text);
+				parent.setStatus (text);
 			}
 		});
 		if (student.getPrevious ().isEmpty ())
@@ -199,6 +195,11 @@ public class JPanelSingleView extends javax.swing.JPanel
 		return within;
 	}
 
+	void setStatus (String text)
+	{
+		parent.setStatus (text);
+	}
+
 	private class AsynchronousLoad implements Runnable
 	{
 
@@ -245,7 +246,7 @@ public class JPanelSingleView extends javax.swing.JPanel
         jPanel1 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTextAreaCustom = new javax.swing.JTextArea();
-        jButtonCopy = new javax.swing.JButton();
+        jButtonOK = new javax.swing.JButton();
         jPanelListHolder = new javax.swing.JPanel();
 
         jPanelPrevious.setBorder(javax.swing.BorderFactory.createTitledBorder("Trimestre précédent"));
@@ -377,16 +378,16 @@ public class JPanelSingleView extends javax.swing.JPanel
         jTextAreaCustom.setWrapStyleWord(true);
         jScrollPane3.setViewportView(jTextAreaCustom);
 
-        jButtonCopy.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ngr/KiKi/appreciator/resources/ic_action_copy.png"))); // NOI18N
-        jButtonCopy.setText("Copier");
-        jButtonCopy.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButtonCopy.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButtonCopy.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonCopy.addActionListener(new java.awt.event.ActionListener()
+        jButtonOK.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ngr/KiKi/appreciator/resources/ic_action_accept.png"))); // NOI18N
+        jButtonOK.setText("OK");
+        jButtonOK.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButtonOK.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonOK.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonOK.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jButtonCopyActionPerformed(evt);
+                jButtonOKActionPerformed(evt);
             }
         });
 
@@ -397,13 +398,13 @@ public class JPanelSingleView extends javax.swing.JPanel
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 689, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButtonCopy, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jButtonOK, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jButtonCopy, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonOK, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
@@ -451,19 +452,17 @@ public class JPanelSingleView extends javax.swing.JPanel
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonCopyActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonCopyActionPerformed
-    {//GEN-HEADEREND:event_jButtonCopyActionPerformed
+    private void jButtonOKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonOKActionPerformed
+    {//GEN-HEADEREND:event_jButtonOKActionPerformed
 		String text = jTextAreaCustom.getText ();
-		StringSelection ss = new StringSelection (text);
-		Clipboard clpbrd = Toolkit.getDefaultToolkit ().getSystemClipboard ();
-		clpbrd.setContents (ss, null);
-		jTextAreaCustom.setText (text);
-		JFrameMain.setStatus (text);
-    }//GEN-LAST:event_jButtonCopyActionPerformed
+		Utils.sendToClipboard (text);
+		parent.setStatus (text);
+		parent.sendToTable (student, text);
+    }//GEN-LAST:event_jButtonOKActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButtonCopy;
+    private javax.swing.JButton jButtonOK;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

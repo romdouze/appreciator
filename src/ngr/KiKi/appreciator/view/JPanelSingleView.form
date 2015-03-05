@@ -278,7 +278,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <Component id="jScrollPane3" pref="689" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jButtonCopy" min="-2" pref="65" max="-2" attributes="0"/>
+                  <Component id="jButtonOK" min="-2" pref="65" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -286,7 +286,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                      <Component id="jButtonCopy" alignment="0" max="32767" attributes="0"/>
+                      <Component id="jButtonOK" alignment="0" max="32767" attributes="0"/>
                       <Component id="jScrollPane3" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -315,12 +315,12 @@
             </Component>
           </SubComponents>
         </Container>
-        <Component class="javax.swing.JButton" name="jButtonCopy">
+        <Component class="javax.swing.JButton" name="jButtonOK">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/ngr/KiKi/appreciator/resources/ic_action_copy.png"/>
+              <Image iconType="3" name="/ngr/KiKi/appreciator/resources/ic_action_accept.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Copier"/>
+            <Property name="text" type="java.lang.String" value="OK"/>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
               <Color id="Hand Cursor"/>
             </Property>
@@ -328,7 +328,7 @@
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonCopyActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonOKActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

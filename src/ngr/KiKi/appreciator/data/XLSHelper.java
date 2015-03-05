@@ -30,6 +30,11 @@ public class XLSHelper
 	private File file = null;
 	private int nbNotes;
 
+	private XLSHelper ()
+	{
+
+	}
+
 	public static XLSHelper getInstance ()
 	{
 		if (sInstance == null)
@@ -141,7 +146,7 @@ public class XLSHelper
 					String s = c.getStringCellValue ();
 					if (s != null && s.startsWith ("  * "))
 					{
-						Appreciation a = new Appreciation (StringUtils.removeLead (s));
+						Appreciation a = new Appreciation (Utils.removeLead (s));
 						Double T1inf = r.getCell (Indices.APPRECIATIONS_FILE_T[0]) != null && r.getCell (Indices.APPRECIATIONS_FILE_T[0]).getCellType () == Cell.CELL_TYPE_NUMERIC ? r.getCell (Indices.APPRECIATIONS_FILE_T[0]).getNumericCellValue () : 0.;
 						Double T1sup = r.getCell (Indices.APPRECIATIONS_FILE_T[0] + 1) != null && r.getCell (Indices.APPRECIATIONS_FILE_T[0] + 1).getCellType () == Cell.CELL_TYPE_NUMERIC ? r.getCell (Indices.APPRECIATIONS_FILE_T[0] + 1).getNumericCellValue () : 20.;
 						Double T2inf = r.getCell (Indices.APPRECIATIONS_FILE_T[1]) != null && r.getCell (Indices.APPRECIATIONS_FILE_T[1]).getCellType () == Cell.CELL_TYPE_NUMERIC ? r.getCell (Indices.APPRECIATIONS_FILE_T[1]).getNumericCellValue () : 0.;

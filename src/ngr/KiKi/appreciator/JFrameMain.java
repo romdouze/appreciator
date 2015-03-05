@@ -29,6 +29,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import ngr.KiKi.appreciator.data.Student;
 import ngr.KiKi.appreciator.data.XLSHelper;
 import ngr.KiKi.appreciator.view.Appreciation;
+import ngr.KiKi.appreciator.view.JPanelClassView;
 import ngr.KiKi.appreciator.view.JPanelSingleView;
 import ngr.KiKi.appreciator.view.JPanelTabbedView;
 
@@ -38,22 +39,23 @@ import ngr.KiKi.appreciator.view.JPanelTabbedView;
  */
 public class JFrameMain extends javax.swing.JFrame
 {
-	
+
 	private XLSHelper book;
 	private static Properties properties;
 	private ArrayList<Student> list;
 	private Student current;
 	private ArrayList<Appreciation> appreciations;
-	
+
 	private static final String PROPERTIES_FILENAME = "appreciator.properties";
 	private static final String PROPERTIES_APPRECIATIONS_FILE = "appreciator.appreciationsFile";
 	private static final String PROPERTIES_RECENT_PATH = "appreciator.recentPath";
-	
+
 	private JPanelTabbedView mainPanel;
 	private JTabbedPane jTabbedPane;
 	private JPanelSingleView singlePanel;
+	private JPanelClassView classPanel;
 	private static JLabel jLabelStatus;
-	
+
 	private boolean arrows;
 
 	/**
@@ -62,10 +64,10 @@ public class JFrameMain extends javax.swing.JFrame
 	public JFrameMain ()
 	{
 		initComponents ();
-		
+
 		init ();
 	}
-	
+
 	private void init ()
 	{
 		properties = new Properties ();
@@ -83,57 +85,59 @@ public class JFrameMain extends javax.swing.JFrame
 		{
 			Logger.getLogger (XLSHelper.class.getName ()).log (Level.SEVERE, null, ex);
 		}
-		
+
 		book = XLSHelper.getInstance ();
 		list = new ArrayList<> ();
 		appreciations = book.loadAppreciations (properties.getProperty (PROPERTIES_APPRECIATIONS_FILE));
 		arrows = false;
-		
+
 		setTitle ("Appreciator");
-		
+
 		jMenuItemPrevious.setEnabled (false);
-		
+
 		this.setLayout (new BorderLayout ());
-		
+
 		jTabbedPane = new JTabbedPane ();
 		jTabbedPane.addTab ("Elèves", new JPanel ());
 		jTabbedPane.addTab ("Classe", new JPanel ());
 		this.add (jTabbedPane, BorderLayout.CENTER);
-		
+
 		singlePanel = new JPanelSingleView (this, current = new Student ());
 //		mainPanel = new JPanelTabbedView ();
 //		this.add (mainPanel, BorderLayout.CENTER);
 		addStatusBar ();
-		
+
+		classPanel = new JPanelClassView (this);
+		jTabbedPane.setComponentAt (1, classPanel);
 	}
-	
+
 	private void addArrows ()
 	{
 		JPanel arrowsPanel = new JPanel ();
 		add (arrowsPanel, BorderLayout.NORTH);
 		arrowsPanel.setPreferredSize (new Dimension (getWidth (), 25));
 		arrowsPanel.setLayout (new BorderLayout ());
-		
+
 		JButton left = new JButton ("<");
 		left.addActionListener ((ae) ->
 		{
 			int i = list.indexOf (current);
 			switchStudent (list.get (i - 1 < 0 ? list.size () - 1 : i - 1));
 		});
-		
+
 		JButton right = new JButton (">");
 		right.addActionListener ((ae) ->
 		{
 			int i = list.indexOf (current);
 			switchStudent (list.get ((i + 1) % list.size ()));
 		});
-		
+
 		arrowsPanel.add (left, BorderLayout.WEST);
 		arrowsPanel.add (right, BorderLayout.EAST);
-		
+
 		arrows = true;
 	}
-	
+
 	private void addStatusBar ()
 	{
 		JPanel statusPanel = new JPanel ();
@@ -145,7 +149,7 @@ public class JFrameMain extends javax.swing.JFrame
 		jLabelStatus.setHorizontalAlignment (SwingConstants.LEFT);
 		statusPanel.add (jLabelStatus);
 	}
-	
+
 	private void switchStudent (Student s)
 	{
 //		remove (singlePanel);
@@ -153,20 +157,25 @@ public class JFrameMain extends javax.swing.JFrame
 		jTabbedPane.setComponentAt (0, singlePanel);
 //		add (singlePanel, BorderLayout.CENTER);
 		current = s;
-		
+
 		pack ();
 	}
-	
+
 	private void quit ()
 	{
 		System.exit (0);
 	}
-	
-	public static void setStatus (String s)
+
+	public void setStatus (String s)
 	{
 		jLabelStatus.setText (s);
 	}
-	
+
+	public void sendToTable (Student st, String text)
+	{
+		classPanel.set (st, text);
+	}
+
 	public ArrayList<Appreciation> getAppreciations ()
 	{
 		return appreciations;
@@ -258,42 +267,44 @@ public class JFrameMain extends javax.swing.JFrame
     private void jMenuItemOpenActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemOpenActionPerformed
     {//GEN-HEADEREND:event_jMenuItemOpenActionPerformed
 		JFileChooser chooser = new JFileChooser ();
-		
+
 		chooser.setFileFilter (new FileNameExtensionFilter ("Fichier Excel", "xls", "XLS"));
 		chooser.setCurrentDirectory (new File (properties.getProperty (PROPERTIES_RECENT_PATH) == null ? "" : properties.getProperty (PROPERTIES_RECENT_PATH)));
 		if (chooser.showOpenDialog (this) != JFileChooser.OPEN_DIALOG)
 			return;
-		
+
 		File file = chooser.getSelectedFile ();
 		if (!book.openBook (file))
 			return;
-		
+
 		list = book.loadStudents ();
-		
+
 		if (!arrows)
 			addArrows ();
-		
+
 		switchStudent (list.get (0));
-		
+
 		jMenuItemPrevious.setEnabled (true);
 		properties.setProperty (PROPERTIES_RECENT_PATH, file.getParent ());
+
+		classPanel.load (list);
 //		mainPanel.load (list);
     }//GEN-LAST:event_jMenuItemOpenActionPerformed
 
     private void jMenuItemPreviousActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemPreviousActionPerformed
     {//GEN-HEADEREND:event_jMenuItemPreviousActionPerformed
 		JFileChooser chooser = new JFileChooser ();
-		
+
 		chooser.setFileFilter (new FileNameExtensionFilter ("Fichier Excel", "xls", "XLS"));
 		chooser.setCurrentDirectory (new File (properties.getProperty (PROPERTIES_RECENT_PATH) == null ? "" : properties.getProperty (PROPERTIES_RECENT_PATH)));
 		if (chooser.showOpenDialog (this) != JFileChooser.OPEN_DIALOG)
 			return;
-		
+
 		File file = chooser.getSelectedFile ();
 		book.loadSecondaryAppreciations (file, list);
-		
+
 		switchStudent (current);
-		
+
 		properties.setProperty (PROPERTIES_RECENT_PATH, file.getParent ());
     }//GEN-LAST:event_jMenuItemPreviousActionPerformed
 
@@ -346,41 +357,6 @@ public class JFrameMain extends javax.swing.JFrame
 			new JFrameMain ().setVisible (true);
 		});
 	}
-
-//	public class Appreciation extends JTextArea
-//	{
-//
-//		private final String text;
-//		private final Dimension size;
-//
-//		public Appreciation (String s)
-//		{
-//			super (s);
-//
-//			text = s;
-//			setOpaque (true);
-//			setBackground (Color.WHITE);
-//			setBorder (new LineBorder (Color.BLACK));
-//			setLineWrap (true);
-//			setWrapStyleWord (true);
-//			setFont (Font.decode ("Tahoma-13"));
-//			size = new Dimension (320, super.getPreferredSize ().height + 20);
-//			setCursor (new Cursor (Cursor.HAND_CURSOR));
-//
-//		}
-//
-//		@Override
-//		public Dimension getPreferredSize ()
-//		{
-//			return size;
-//		}
-//
-//		@Override
-//		public String getText ()
-//		{
-//			return text;
-//		}
-//	}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu jMenu1;

@@ -10,20 +10,17 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import javax.swing.JTextArea;
-import ngr.KiKi.appreciator.JFrameMain;
 import ngr.KiKi.appreciator.data.Student;
+import ngr.KiKi.appreciator.data.Utils;
 
 /**
  *
  * @author KiKi
  */
-public class AppreciationRenderer extends JTextArea implements MouseListener
+public class AppreciationRenderer extends JTextArea
 {
 
 	private final Appreciation appreciation;
@@ -42,7 +39,30 @@ public class AppreciationRenderer extends JTextArea implements MouseListener
 		setEditable (false);
 		setCursor (new Cursor (Cursor.HAND_CURSOR));
 
-		addMouseListener (this);
+		addMouseListener (new MouseAdapter ()
+		{
+
+			@Override
+			public void mouseClicked (MouseEvent me)
+			{
+				String text = getText ();
+				Utils.sendToClipboard (text);
+				parent.setCustomAreaText (text);
+				parent.setStatus (text);
+			}
+
+			@Override
+			public void mouseEntered (MouseEvent me)
+			{
+				setBackground (Color.LIGHT_GRAY);
+			}
+
+			@Override
+			public void mouseExited (MouseEvent me)
+			{
+				setBackground (Color.WHITE);
+			}
+		});
 
 		parent = p;
 		appreciation = a;
@@ -51,41 +71,6 @@ public class AppreciationRenderer extends JTextArea implements MouseListener
 	public Appreciation getAppreciation ()
 	{
 		return appreciation;
-	}
-
-	@Override
-	public void mouseClicked (MouseEvent me)
-	{
-		String text = getText ();
-		StringSelection ss = new StringSelection (text);
-		Clipboard clpbrd = Toolkit.getDefaultToolkit ().getSystemClipboard ();
-		clpbrd.setContents (ss, null);
-		parent.setCustomAreaText (text);
-		JFrameMain.setStatus (text);
-	}
-
-	@Override
-	public void mousePressed (MouseEvent me)
-	{
-
-	}
-
-	@Override
-	public void mouseReleased (MouseEvent me)
-	{
-
-	}
-
-	@Override
-	public void mouseEntered (MouseEvent me)
-	{
-		setBackground (Color.LIGHT_GRAY);
-	}
-
-	@Override
-	public void mouseExited (MouseEvent me)
-	{
-		setBackground (Color.WHITE);
 	}
 
 	@Override
