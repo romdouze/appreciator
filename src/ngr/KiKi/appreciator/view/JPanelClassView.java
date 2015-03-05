@@ -48,6 +48,7 @@ public class JPanelClassView extends javax.swing.JPanel
 		map = new HashMap<> ();
 		model = (DefaultTableModel) jTableClass.getModel ();
 		jTableClass.setSelectionModel (new ForcedListSelectionModel ());
+//		jTableClass.getColumnModel ().getColumn (1).setCellRenderer (new MyTableCellRenderer ());
 		jTableClass.setCursor (new Cursor (Cursor.HAND_CURSOR));
 		jTableClass.setToolTipText ("Copier appréciation");
 		jTableClass.addMouseListener (new MouseAdapter ()
