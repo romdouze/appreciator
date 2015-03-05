@@ -22,6 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -37,21 +38,22 @@ import ngr.KiKi.appreciator.view.JPanelTabbedView;
  */
 public class JFrameMain extends javax.swing.JFrame
 {
-
+	
 	private XLSHelper book;
 	private static Properties properties;
 	private ArrayList<Student> list;
 	private Student current;
 	private ArrayList<Appreciation> appreciations;
-
+	
 	private static final String PROPERTIES_FILENAME = "appreciator.properties";
 	private static final String PROPERTIES_APPRECIATIONS_FILE = "appreciator.appreciationsFile";
 	private static final String PROPERTIES_RECENT_PATH = "appreciator.recentPath";
-
+	
 	private JPanelTabbedView mainPanel;
+	private JTabbedPane jTabbedPane;
 	private JPanelSingleView singlePanel;
 	private static JLabel jLabelStatus;
-
+	
 	private boolean arrows;
 
 	/**
@@ -60,10 +62,10 @@ public class JFrameMain extends javax.swing.JFrame
 	public JFrameMain ()
 	{
 		initComponents ();
-
+		
 		init ();
 	}
-
+	
 	private void init ()
 	{
 		properties = new Properties ();
@@ -81,52 +83,57 @@ public class JFrameMain extends javax.swing.JFrame
 		{
 			Logger.getLogger (XLSHelper.class.getName ()).log (Level.SEVERE, null, ex);
 		}
-
+		
 		book = XLSHelper.getInstance ();
 		list = new ArrayList<> ();
 		appreciations = book.loadAppreciations (properties.getProperty (PROPERTIES_APPRECIATIONS_FILE));
 		arrows = false;
-
+		
 		setTitle ("Appreciator");
-
-		jMenuItem3.setEnabled (false);
-
+		
+		jMenuItemPrevious.setEnabled (false);
+		
 		this.setLayout (new BorderLayout ());
-
+		
+		jTabbedPane = new JTabbedPane ();
+		jTabbedPane.addTab ("Elèves", new JPanel ());
+		jTabbedPane.addTab ("Classe", new JPanel ());
+		this.add (jTabbedPane, BorderLayout.CENTER);
+		
 		singlePanel = new JPanelSingleView (this, current = new Student ());
 //		mainPanel = new JPanelTabbedView ();
 //		this.add (mainPanel, BorderLayout.CENTER);
 		addStatusBar ();
-
+		
 	}
-
+	
 	private void addArrows ()
 	{
 		JPanel arrowsPanel = new JPanel ();
 		add (arrowsPanel, BorderLayout.NORTH);
 		arrowsPanel.setPreferredSize (new Dimension (getWidth (), 25));
 		arrowsPanel.setLayout (new BorderLayout ());
-
+		
 		JButton left = new JButton ("<");
 		left.addActionListener ((ae) ->
 		{
 			int i = list.indexOf (current);
 			switchStudent (list.get (i - 1 < 0 ? list.size () - 1 : i - 1));
 		});
-
+		
 		JButton right = new JButton (">");
 		right.addActionListener ((ae) ->
 		{
 			int i = list.indexOf (current);
 			switchStudent (list.get ((i + 1) % list.size ()));
 		});
-
+		
 		arrowsPanel.add (left, BorderLayout.WEST);
 		arrowsPanel.add (right, BorderLayout.EAST);
-
+		
 		arrows = true;
 	}
-
+	
 	private void addStatusBar ()
 	{
 		JPanel statusPanel = new JPanel ();
@@ -138,27 +145,28 @@ public class JFrameMain extends javax.swing.JFrame
 		jLabelStatus.setHorizontalAlignment (SwingConstants.LEFT);
 		statusPanel.add (jLabelStatus);
 	}
-
+	
 	private void switchStudent (Student s)
 	{
-		remove (singlePanel);
+//		remove (singlePanel);
 		singlePanel = new JPanelSingleView (this, s);
-		add (singlePanel, BorderLayout.CENTER);
+		jTabbedPane.setComponentAt (0, singlePanel);
+//		add (singlePanel, BorderLayout.CENTER);
 		current = s;
-
+		
 		pack ();
 	}
-
+	
 	private void quit ()
 	{
 		System.exit (0);
 	}
-
+	
 	public static void setStatus (String s)
 	{
 		jLabelStatus.setText (s);
 	}
-
+	
 	public ArrayList<Appreciation> getAppreciations ()
 	{
 		return appreciations;
@@ -175,54 +183,54 @@ public class JFrameMain extends javax.swing.JFrame
 
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItemOpen = new javax.swing.JMenuItem();
+        jMenuItemClose = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
-        jMenuItem3 = new javax.swing.JMenuItem();
+        jMenuItemPrevious = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jMenu1.setMnemonic('F');
         jMenu1.setText("Fichier");
 
-        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem2.setMnemonic('O');
-        jMenuItem2.setText("Ouvrir");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener()
+        jMenuItemOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItemOpen.setMnemonic('O');
+        jMenuItemOpen.setText("Ouvrir");
+        jMenuItemOpen.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jMenuItem2ActionPerformed(evt);
+                jMenuItemOpenActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem2);
+        jMenu1.add(jMenuItemOpen);
 
-        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem1.setMnemonic('Q');
-        jMenuItem1.setText("Quitter");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener()
+        jMenuItemClose.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItemClose.setMnemonic('Q');
+        jMenuItemClose.setText("Quitter");
+        jMenuItemClose.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jMenuItem1ActionPerformed(evt);
+                jMenuItemCloseActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem1);
+        jMenu1.add(jMenuItemClose);
 
         jMenuBar1.add(jMenu1);
 
         jMenu2.setMnemonic('O');
         jMenu2.setText("Options");
 
-        jMenuItem3.setText("Appréciations précédentes");
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener()
+        jMenuItemPrevious.setText("Appréciations précédentes");
+        jMenuItemPrevious.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jMenuItem3ActionPerformed(evt);
+                jMenuItemPreviousActionPerformed(evt);
             }
         });
-        jMenu2.add(jMenuItem3);
+        jMenu2.add(jMenuItemPrevious);
 
         jMenuBar1.add(jMenu2);
 
@@ -242,52 +250,52 @@ public class JFrameMain extends javax.swing.JFrame
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem1ActionPerformed
-    {//GEN-HEADEREND:event_jMenuItem1ActionPerformed
+    private void jMenuItemCloseActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemCloseActionPerformed
+    {//GEN-HEADEREND:event_jMenuItemCloseActionPerformed
 		quit ();
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_jMenuItemCloseActionPerformed
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem2ActionPerformed
-    {//GEN-HEADEREND:event_jMenuItem2ActionPerformed
+    private void jMenuItemOpenActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemOpenActionPerformed
+    {//GEN-HEADEREND:event_jMenuItemOpenActionPerformed
 		JFileChooser chooser = new JFileChooser ();
-
+		
 		chooser.setFileFilter (new FileNameExtensionFilter ("Fichier Excel", "xls", "XLS"));
 		chooser.setCurrentDirectory (new File (properties.getProperty (PROPERTIES_RECENT_PATH) == null ? "" : properties.getProperty (PROPERTIES_RECENT_PATH)));
 		if (chooser.showOpenDialog (this) != JFileChooser.OPEN_DIALOG)
 			return;
-
+		
 		File file = chooser.getSelectedFile ();
 		if (!book.openBook (file))
 			return;
-
+		
 		list = book.loadStudents ();
-
+		
 		if (!arrows)
 			addArrows ();
-
+		
 		switchStudent (list.get (0));
-
-		jMenuItem3.setEnabled (true);
+		
+		jMenuItemPrevious.setEnabled (true);
 		properties.setProperty (PROPERTIES_RECENT_PATH, file.getParent ());
 //		mainPanel.load (list);
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
+    }//GEN-LAST:event_jMenuItemOpenActionPerformed
 
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem3ActionPerformed
-    {//GEN-HEADEREND:event_jMenuItem3ActionPerformed
+    private void jMenuItemPreviousActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemPreviousActionPerformed
+    {//GEN-HEADEREND:event_jMenuItemPreviousActionPerformed
 		JFileChooser chooser = new JFileChooser ();
-
+		
 		chooser.setFileFilter (new FileNameExtensionFilter ("Fichier Excel", "xls", "XLS"));
 		chooser.setCurrentDirectory (new File (properties.getProperty (PROPERTIES_RECENT_PATH) == null ? "" : properties.getProperty (PROPERTIES_RECENT_PATH)));
 		if (chooser.showOpenDialog (this) != JFileChooser.OPEN_DIALOG)
 			return;
-
+		
 		File file = chooser.getSelectedFile ();
 		book.loadSecondaryAppreciations (file, list);
-
+		
 		switchStudent (current);
-
+		
 		properties.setProperty (PROPERTIES_RECENT_PATH, file.getParent ());
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
+    }//GEN-LAST:event_jMenuItemPreviousActionPerformed
 
 	/**
 	 * @param args the command line arguments
@@ -378,8 +386,8 @@ public class JFrameMain extends javax.swing.JFrame
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem jMenuItemClose;
+    private javax.swing.JMenuItem jMenuItemOpen;
+    private javax.swing.JMenuItem jMenuItemPrevious;
     // End of variables declaration//GEN-END:variables
 }
