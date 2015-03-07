@@ -5,6 +5,7 @@
  */
 package ngr.KiKi.appreciator.view;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -25,12 +26,14 @@ public class MultiLineTableCellRenderer extends JTextArea
 {
 
 	private final List<List<Integer>> rowColHeight = new ArrayList<> ();
+	private int highlighted;
 
 	public MultiLineTableCellRenderer ()
 	{
 		setLineWrap (true);
 		setWrapStyleWord (true);
 		setOpaque (true);
+		highlighted = -1;
 	}
 
 	@Override
@@ -38,17 +41,19 @@ public class MultiLineTableCellRenderer extends JTextArea
 			JTable table, Object value, boolean isSelected, boolean hasFocus,
 			int row, int column)
 	{
+		setForeground (table.getForeground ());
+		setBackground (table.getBackground ());
+
+		setFont (table.getFont ());
+
+		if (row == highlighted)
+			setBackground (Color.LIGHT_GRAY);
 		if (isSelected)
 		{
 			setForeground (table.getSelectionForeground ());
 			setBackground (table.getSelectionBackground ());
 		}
-		else
-		{
-			setForeground (table.getForeground ());
-			setBackground (table.getBackground ());
-		}
-		setFont (table.getFont ());
+
 		if (hasFocus)
 		{
 			setBorder (UIManager.getBorder ("Table.focusCellHighlightBorder"));
@@ -66,6 +71,11 @@ public class MultiLineTableCellRenderer extends JTextArea
 			setText ("");
 		adjustRowHeight (table, row, column);
 		return this;
+	}
+
+	public void setHighlightedRow (int c)
+	{
+		highlighted = c;
 	}
 
 	/**

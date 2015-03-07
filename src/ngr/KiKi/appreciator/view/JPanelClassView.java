@@ -51,8 +51,14 @@ public class JPanelClassView extends javax.swing.JPanel
 		jTableClass.setDefaultRenderer (String.class, new MultiLineTableCellRenderer ());
 		jTableClass.setCursor (new Cursor (Cursor.HAND_CURSOR));
 		jTableClass.setToolTipText ("Copier appréciation");
-		jTableClass.addMouseListener (new MouseAdapter ()
+
+		MouseAdapter mouseAdapter = new MouseAdapter ()
 		{
+			private int[] previous = new int[]
+			{
+				-1, -1
+			};
+
 			private int[] cellAtPoint (Point p)
 			{
 				return new int[]
@@ -62,14 +68,28 @@ public class JPanelClassView extends javax.swing.JPanel
 			}
 
 			@Override
+			public void mouseMoved (MouseEvent me)
+			{
+				int[] cell = cellAtPoint (me.getPoint ());
+
+				if (cell[0] != previous[0])
+				{
+					((MultiLineTableCellRenderer) jTableClass.getDefaultRenderer (String.class)).setHighlightedRow (cell[0]);
+					repaint ();
+				}
+
+				previous = cell;
+			}
+
+			@Override
 			public void mouseClicked (MouseEvent me)
 			{
 				if (me.getButton () == MouseEvent.BUTTON1)
 				{
 					int[] cell = cellAtPoint (me.getPoint ());
-					if (cell[1] == 1)
+					if (cell[0] != -1)
 					{
-						String text = (String) model.getValueAt (cell[0], cell[1]);
+						String text = (String) model.getValueAt (cell[0], 1);
 						Utils.sendToClipboard (text);
 						parent.setStatus (text);
 					}
@@ -77,18 +97,14 @@ public class JPanelClassView extends javax.swing.JPanel
 			}
 
 			@Override
-			public void mouseEntered (MouseEvent me)
+			public void mouseReleased (MouseEvent me)
 			{
-				int[] cell = cellAtPoint (me.getPoint ());
-				jTableClass.getCellRenderer (cell[0], cell[1]);
+				mouseClicked (me);
 			}
+		};
 
-			@Override
-			public void mouseExited (MouseEvent me)
-			{
-
-			}
-		});
+		jTableClass.addMouseListener (mouseAdapter);
+		jTableClass.addMouseMotionListener (mouseAdapter);
 	}
 
 	public void load (ArrayList<Student> list)
@@ -197,7 +213,6 @@ public class JPanelClassView extends javax.swing.JPanel
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTableClass;
     // End of variables declaration//GEN-END:variables
