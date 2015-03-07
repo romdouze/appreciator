@@ -48,7 +48,7 @@ public class JPanelClassView extends javax.swing.JPanel
 		map = new HashMap<> ();
 		model = (DefaultTableModel) jTableClass.getModel ();
 		jTableClass.setSelectionModel (new ForcedListSelectionModel ());
-//		jTableClass.getColumnModel ().getColumn (1).setCellRenderer (new MyTableCellRenderer ());
+		jTableClass.setDefaultRenderer (String.class, new MultiLineTableCellRenderer ());
 		jTableClass.setCursor (new Cursor (Cursor.HAND_CURSOR));
 		jTableClass.setToolTipText ("Copier appréciation");
 		jTableClass.addMouseListener (new MouseAdapter ()
@@ -82,11 +82,11 @@ public class JPanelClassView extends javax.swing.JPanel
 				int[] cell = cellAtPoint (me.getPoint ());
 				jTableClass.getCellRenderer (cell[0], cell[1]);
 			}
-			
+
 			@Override
 			public void mouseExited (MouseEvent me)
 			{
-				
+
 			}
 		});
 	}
