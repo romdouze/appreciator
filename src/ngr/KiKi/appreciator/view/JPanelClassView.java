@@ -97,6 +97,13 @@ public class JPanelClassView extends javax.swing.JPanel
 			}
 
 			@Override
+			public void mouseExited (MouseEvent me)
+			{
+				((MultiLineTableCellRenderer) jTableClass.getDefaultRenderer (String.class)).setHighlightedRow (-1);
+				repaint ();
+			}
+
+			@Override
 			public void mouseReleased (MouseEvent me)
 			{
 				mouseClicked (me);
