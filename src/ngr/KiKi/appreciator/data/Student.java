@@ -22,6 +22,8 @@ public class Student
 	private Double mean;
 	private String appreciation;
 	private String previousAppreciation;
+	private int behaviour;
+	private int focus;
 
 	public Student ()
 	{
@@ -44,6 +46,8 @@ public class Student
 		mean = m;
 		appreciation = a;
 		previousAppreciation = "";
+		behaviour = 2;
+		focus = 2;
 	}
 
 	private void splitNames ()
@@ -134,13 +138,33 @@ public class Student
 		this.appreciation = appreciation;
 	}
 
-	public String getPrevious ()
+	public String getPreviousAppreciation ()
 	{
 		return previousAppreciation;
 	}
 
-	public void setPrevious (String previous)
+	public void setPreviousAppreciation (String previous)
 	{
 		previousAppreciation = previous;
+	}
+
+	public int getBehaviour ()
+	{
+		return behaviour;
+	}
+
+	public void setBehaviour (int behaviour)
+	{
+		this.behaviour = behaviour;
+	}
+
+	public int getFocus ()
+	{
+		return focus;
+	}
+
+	public void setFocus (int focus)
+	{
+		this.focus = focus;
 	}
 }

@@ -5,11 +5,14 @@
  */
 package ngr.KiKi.appreciator.view;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JButton;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
@@ -21,18 +24,23 @@ import javax.swing.table.TableCellRenderer;
  *
  * @author KiKi
  */
-public class MultiLineTableCellRenderer extends JTextArea
+public class MultiLineTableCellRenderer extends JPanel
 		implements TableCellRenderer
 {
 
 	private final List<List<Integer>> rowColHeight = new ArrayList<> ();
 	private int highlighted;
 
+	private final JTextArea textArea;
+	private final JButton button;
+
 	public MultiLineTableCellRenderer ()
 	{
-		setLineWrap (true);
-		setWrapStyleWord (true);
-		setOpaque (true);
+		textArea = new JTextArea ();
+		textArea.setLineWrap (true);
+		textArea.setWrapStyleWord (true);
+		textArea.setOpaque (true);
+		button = new JButton ("Copier");
 		highlighted = -1;
 	}
 
@@ -41,34 +49,42 @@ public class MultiLineTableCellRenderer extends JTextArea
 			JTable table, Object value, boolean isSelected, boolean hasFocus,
 			int row, int column)
 	{
-		setForeground (table.getForeground ());
-		setBackground (table.getBackground ());
+		textArea.setForeground (table.getForeground ());
+		textArea.setBackground (table.getBackground ());
 
-		setFont (table.getFont ());
+		textArea.setFont (table.getFont ());
 
 		if (row == highlighted)
-			setBackground (Color.LIGHT_GRAY);
+			textArea.setBackground (Color.LIGHT_GRAY);
 		if (isSelected)
 		{
-			setForeground (table.getSelectionForeground ());
-			setBackground (table.getSelectionBackground ());
+			textArea.setForeground (table.getSelectionForeground ());
+			textArea.setBackground (table.getSelectionBackground ());
 		}
 
 		if (hasFocus)
 		{
-			setBorder (UIManager.getBorder ("Table.focusCellHighlightBorder"));
+			textArea.setBorder (UIManager.getBorder ("Table.focusCellHighlightBorder"));
 			if (table.isCellEditable (row, column))
 			{
-				setForeground (UIManager.getColor ("Table.focusCellForeground"));
-				setBackground (UIManager.getColor ("Table.focusCellBackground"));
+				textArea.setForeground (UIManager.getColor ("Table.focusCellForeground"));
+				textArea.setBackground (UIManager.getColor ("Table.focusCellBackground"));
 			}
 		}
 		else
-			setBorder (new EmptyBorder (1, 2, 1, 2));
+			textArea.setBorder (new EmptyBorder (1, 2, 1, 2));
 		if (value != null)
-			setText (value.toString ());
+			textArea.setText (value.toString ());
 		else
-			setText ("");
+			textArea.setText ("");
+
+		setLayout (new BorderLayout ());
+		add (textArea, BorderLayout.CENTER);
+		if (column == 1)
+			add (button, BorderLayout.EAST);
+		else
+			remove (button);
+
 		adjustRowHeight (table, row, column);
 		return this;
 	}
@@ -89,8 +105,8 @@ public class MultiLineTableCellRenderer extends JTextArea
 		//getPreferredSize() returnes the proper height which the row should have in
 		//order to make room for the text.
 		int cWidth = table.getTableHeader ().getColumnModel ().getColumn (column).getWidth ();
-		setSize (new Dimension (cWidth, 1000));
-		int prefH = getPreferredSize ().height;
+		textArea.setSize (new Dimension (cWidth, 1000));
+		int prefH = textArea.getPreferredSize ().height;
 		while (rowColHeight.size () <= row)
 			rowColHeight.add (new ArrayList<> (column));
 		List<Integer> colHeights = rowColHeight.get (row);

@@ -69,7 +69,7 @@ public class JPanelSingleView extends javax.swing.JPanel
 		jTextFieldMean.setText (student.getMean ().toString ());
 
 		for (int i = 0; i < student.getNotes ().length; i++)
-			jTFNotes[i].setText (student.getNotes ()[i].toString ());
+			jTFNotes[i].setText (student.getNotes ()[i] < 0 ? "" : student.getNotes ()[i].toString ());
 
 		DocumentListener docListener = new DocumentListener ()
 		{
@@ -104,10 +104,14 @@ public class JPanelSingleView extends javax.swing.JPanel
 				updateList ();
 		};
 
+		jSliderBehaviour.setValue (student.getBehaviour ());
+		jSliderFocus.setValue (student.getFocus ());
 		jSliderBehaviour.addChangeListener (sliderListener);
 		jSliderFocus.addChangeListener (sliderListener);
 
-		jTextAreaPrevious.setText (student.getPrevious ());
+		jTextAreaCustom.setText (student.getAppreciation ());
+
+		jTextAreaPrevious.setText (student.getPreviousAppreciation ());
 		jTextAreaPrevious.addMouseListener (new MouseAdapter ()
 		{
 			@Override
@@ -131,7 +135,7 @@ public class JPanelSingleView extends javax.swing.JPanel
 				parent.setStatus (text);
 			}
 		});
-		if (student.getPrevious ().isEmpty ())
+		if (student.getPreviousAppreciation ().isEmpty ())
 			jPanelPrevious.setVisible (false);
 
 		jPanelList = new JPanel ();
@@ -195,9 +199,22 @@ public class JPanelSingleView extends javax.swing.JPanel
 		return within;
 	}
 
-	void setStatus (String text)
+	public void setStatus (String text)
 	{
 		parent.setStatus (text);
+	}
+
+	public Student updateCurrentValues ()
+	{
+		student.setMean (Double.valueOf (jTextFieldMean.getText ()));
+		student.setNotes (new Double[]
+		{
+			Double.valueOf (jTFNotes[0].getText ().isEmpty () ? "-1" : jTFNotes[0].getText ()), Double.valueOf (jTFNotes[1].getText ().isEmpty () ? "-1" : jTFNotes[1].getText ()), Double.valueOf (jTFNotes[2].getText ().isEmpty () ? "-1" : jTFNotes[2].getText ())
+		});
+		student.setBehaviour (jSliderBehaviour.getValue ());
+		student.setFocus (jSliderFocus.getValue ());
+
+		return student;
 	}
 
 	private class AsynchronousLoad implements Runnable
@@ -458,6 +475,7 @@ public class JPanelSingleView extends javax.swing.JPanel
 		Utils.sendToClipboard (text);
 		parent.setStatus (text);
 		parent.sendToTable (student, text);
+		student.setAppreciation (jTextAreaCustom.getText ());
     }//GEN-LAST:event_jButtonOKActionPerformed
 
 

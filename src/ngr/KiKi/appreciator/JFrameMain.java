@@ -103,8 +103,7 @@ public class JFrameMain extends javax.swing.JFrame
 		this.add (jTabbedPane, BorderLayout.CENTER);
 
 		singlePanel = new JPanelSingleView (this, current = new Student ());
-//		mainPanel = new JPanelTabbedView ();
-//		this.add (mainPanel, BorderLayout.CENTER);
+
 		addStatusBar ();
 
 		classPanel = new JPanelClassView (this);
@@ -152,13 +151,17 @@ public class JFrameMain extends javax.swing.JFrame
 
 	private void switchStudent (Student s)
 	{
-//		remove (singlePanel);
+		singlePanel.updateCurrentValues ();
 		singlePanel = new JPanelSingleView (this, s);
 		jTabbedPane.setComponentAt (0, singlePanel);
-//		add (singlePanel, BorderLayout.CENTER);
 		current = s;
 
 		pack ();
+	}
+
+	public void switchStudent (int index)
+	{
+		switchStudent (list.get (index));
 	}
 
 	private void quit ()
@@ -168,7 +171,7 @@ public class JFrameMain extends javax.swing.JFrame
 
 	public void setStatus (String s)
 	{
-		jLabelStatus.setText (s);
+		jLabelStatus.setText ("Copié : " + s);
 	}
 
 	public void sendToTable (Student st, String text)
@@ -196,6 +199,9 @@ public class JFrameMain extends javax.swing.JFrame
         jMenuItemClose = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItemPrevious = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -241,7 +247,17 @@ public class JFrameMain extends javax.swing.JFrame
         });
         jMenu2.add(jMenuItemPrevious);
 
+        jMenuItem2.setText("Options...");
+        jMenu2.add(jMenuItem2);
+
         jMenuBar1.add(jMenu2);
+
+        jMenu3.setText("?");
+
+        jMenuItem1.setText("A propos");
+        jMenu3.add(jMenuItem1);
+
+        jMenuBar1.add(jMenu3);
 
         setJMenuBar(jMenuBar1);
 
@@ -361,7 +377,10 @@ public class JFrameMain extends javax.swing.JFrame
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItemClose;
     private javax.swing.JMenuItem jMenuItemOpen;
     private javax.swing.JMenuItem jMenuItemPrevious;

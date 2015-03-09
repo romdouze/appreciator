@@ -103,7 +103,7 @@ public class XLSHelper
 				}
 
 			if (!appreciation.isEmpty ())
-				student.setPrevious (appreciation);
+				student.setPreviousAppreciation (appreciation);
 		}
 
 		return true;
