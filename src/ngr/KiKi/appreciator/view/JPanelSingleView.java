@@ -151,6 +151,7 @@ public class JPanelSingleView extends javax.swing.JPanel
 
 		JScrollPane jScrollPaneList = new JScrollPane (jPanelList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		jScrollPaneList.getVerticalScrollBar ().setValue (0);
+		jScrollPaneList.getVerticalScrollBar ().setUnitIncrement (16);
 
 		jPanelListHolder.setLayout (new BorderLayout ());
 		jPanelListHolder.add (jScrollPaneList, BorderLayout.CENTER);
