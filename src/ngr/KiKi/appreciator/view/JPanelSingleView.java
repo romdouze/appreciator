@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import javax.swing.DefaultListModel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -166,7 +167,9 @@ public class JPanelSingleView extends javax.swing.JPanel
 	{
 		jPanelList.removeAll ();
 		arList.clear ();
-		parent.getAppreciations ().stream ().forEach ((a) ->
+		ArrayList<Appreciation> copy = new ArrayList<> (parent.getAppreciations ());
+		Collections.shuffle (copy);
+		copy.stream ().forEach ((a) ->
 		{
 			AppreciationRenderer ar = new AppreciationRenderer (this, a, student);
 			arList.add (ar);
