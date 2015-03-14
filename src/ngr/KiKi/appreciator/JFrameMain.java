@@ -39,23 +39,23 @@ import ngr.KiKi.appreciator.view.JPanelTabbedView;
  */
 public class JFrameMain extends javax.swing.JFrame
 {
-
+	
 	private XLSHelper book;
 	private static Properties properties;
 	private ArrayList<Student> list;
 	private Student current;
 	private ArrayList<Appreciation> appreciations;
-
+	
 	private static final String PROPERTIES_FILENAME = "appreciator.properties";
 	private static final String PROPERTIES_APPRECIATIONS_FILE = "appreciator.appreciationsFile";
 	private static final String PROPERTIES_RECENT_PATH = "appreciator.recentPath";
-
+	
 	private JPanelTabbedView mainPanel;
 	private JTabbedPane jTabbedPane;
 	private JPanelSingleView singlePanel;
 	private JPanelClassView classPanel;
 	private static JLabel jLabelStatus;
-
+	
 	private boolean arrows;
 
 	/**
@@ -64,10 +64,10 @@ public class JFrameMain extends javax.swing.JFrame
 	public JFrameMain ()
 	{
 		initComponents ();
-
+		
 		init ();
 	}
-
+	
 	private void init ()
 	{
 		properties = new Properties ();
@@ -85,58 +85,58 @@ public class JFrameMain extends javax.swing.JFrame
 		{
 			Logger.getLogger (XLSHelper.class.getName ()).log (Level.SEVERE, null, ex);
 		}
-
+		
 		book = XLSHelper.getInstance ();
 		list = new ArrayList<> ();
 		appreciations = book.loadAppreciations (properties.getProperty (PROPERTIES_APPRECIATIONS_FILE));
 		arrows = false;
-
+		
 		setTitle ("Appreciator");
-
+		
 		jMenuItemPrevious.setEnabled (false);
-
+		
 		this.setLayout (new BorderLayout ());
-
+		
 		jTabbedPane = new JTabbedPane ();
 		jTabbedPane.addTab ("Elèves", new JPanel ());
 		jTabbedPane.addTab ("Classe", new JPanel ());
 		this.add (jTabbedPane, BorderLayout.CENTER);
-
+		
 		singlePanel = new JPanelSingleView (this, current = new Student ());
-
+		
 		addStatusBar ();
-
+		
 		classPanel = new JPanelClassView (this);
 		jTabbedPane.setComponentAt (1, classPanel);
 	}
-
+	
 	private void addArrows ()
 	{
 		JPanel arrowsPanel = new JPanel ();
 		add (arrowsPanel, BorderLayout.NORTH);
 		arrowsPanel.setPreferredSize (new Dimension (getWidth (), 25));
 		arrowsPanel.setLayout (new BorderLayout ());
-
+		
 		JButton left = new JButton ("<");
 		left.addActionListener ((ae) ->
 		{
 			int i = list.indexOf (current);
 			switchStudent (list.get (i - 1 < 0 ? list.size () - 1 : i - 1));
 		});
-
+		
 		JButton right = new JButton (">");
 		right.addActionListener ((ae) ->
 		{
 			int i = list.indexOf (current);
 			switchStudent (list.get ((i + 1) % list.size ()));
 		});
-
+		
 		arrowsPanel.add (left, BorderLayout.WEST);
 		arrowsPanel.add (right, BorderLayout.EAST);
-
+		
 		arrows = true;
 	}
-
+	
 	private void addStatusBar ()
 	{
 		JPanel statusPanel = new JPanel ();
@@ -148,37 +148,37 @@ public class JFrameMain extends javax.swing.JFrame
 		jLabelStatus.setHorizontalAlignment (SwingConstants.LEFT);
 		statusPanel.add (jLabelStatus);
 	}
-
+	
 	private void switchStudent (Student s)
 	{
 		singlePanel.updateCurrentValues ();
 		singlePanel = new JPanelSingleView (this, s);
 		jTabbedPane.setComponentAt (0, singlePanel);
 		current = s;
-
+		
 		pack ();
 	}
-
+	
 	public void switchStudent (int index)
 	{
 		switchStudent (list.get (index));
 	}
-
+	
 	private void quit ()
 	{
 		System.exit (0);
 	}
-
+	
 	public void setStatus (String s)
 	{
 		jLabelStatus.setText ("Copié : " + s);
 	}
-
+	
 	public void sendToTable (Student st, String text)
 	{
 		classPanel.set (st, text);
 	}
-
+	
 	public ArrayList<Appreciation> getAppreciations ()
 	{
 		return appreciations;
@@ -199,7 +199,7 @@ public class JFrameMain extends javax.swing.JFrame
         jMenuItemClose = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItemPrevious = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
+        jCheckBoxMenuItemCopy = new javax.swing.JCheckBoxMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
 
@@ -247,8 +247,15 @@ public class JFrameMain extends javax.swing.JFrame
         });
         jMenu2.add(jMenuItemPrevious);
 
-        jMenuItem2.setText("Options...");
-        jMenu2.add(jMenuItem2);
+        jCheckBoxMenuItemCopy.setText("Boutons 'copier' visibles");
+        jCheckBoxMenuItemCopy.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jCheckBoxMenuItemCopyActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jCheckBoxMenuItemCopy);
 
         jMenuBar1.add(jMenu2);
 
@@ -283,26 +290,26 @@ public class JFrameMain extends javax.swing.JFrame
     private void jMenuItemOpenActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemOpenActionPerformed
     {//GEN-HEADEREND:event_jMenuItemOpenActionPerformed
 		JFileChooser chooser = new JFileChooser ();
-
+		
 		chooser.setFileFilter (new FileNameExtensionFilter ("Fichier Excel", "xls", "XLS"));
 		chooser.setCurrentDirectory (new File (properties.getProperty (PROPERTIES_RECENT_PATH) == null ? "" : properties.getProperty (PROPERTIES_RECENT_PATH)));
 		if (chooser.showOpenDialog (this) != JFileChooser.OPEN_DIALOG)
 			return;
-
+		
 		File file = chooser.getSelectedFile ();
 		if (!book.openBook (file))
 			return;
-
+		
 		list = book.loadStudents ();
-
+		
 		if (!arrows)
 			addArrows ();
-
+		
 		switchStudent (list.get (0));
-
+		
 		jMenuItemPrevious.setEnabled (true);
 		properties.setProperty (PROPERTIES_RECENT_PATH, file.getParent ());
-
+		
 		classPanel.load (list);
 //		mainPanel.load (list);
     }//GEN-LAST:event_jMenuItemOpenActionPerformed
@@ -310,19 +317,24 @@ public class JFrameMain extends javax.swing.JFrame
     private void jMenuItemPreviousActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemPreviousActionPerformed
     {//GEN-HEADEREND:event_jMenuItemPreviousActionPerformed
 		JFileChooser chooser = new JFileChooser ();
-
+		
 		chooser.setFileFilter (new FileNameExtensionFilter ("Fichier Excel", "xls", "XLS"));
 		chooser.setCurrentDirectory (new File (properties.getProperty (PROPERTIES_RECENT_PATH) == null ? "" : properties.getProperty (PROPERTIES_RECENT_PATH)));
 		if (chooser.showOpenDialog (this) != JFileChooser.OPEN_DIALOG)
 			return;
-
+		
 		File file = chooser.getSelectedFile ();
 		book.loadSecondaryAppreciations (file, list);
-
+		
 		switchStudent (current);
-
+		
 		properties.setProperty (PROPERTIES_RECENT_PATH, file.getParent ());
     }//GEN-LAST:event_jMenuItemPreviousActionPerformed
+
+    private void jCheckBoxMenuItemCopyActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jCheckBoxMenuItemCopyActionPerformed
+    {//GEN-HEADEREND:event_jCheckBoxMenuItemCopyActionPerformed
+		classPanel.setButtonsVisible (jCheckBoxMenuItemCopy.isSelected ());
+    }//GEN-LAST:event_jCheckBoxMenuItemCopyActionPerformed
 
 	/**
 	 * @param args the command line arguments
@@ -375,12 +387,12 @@ public class JFrameMain extends javax.swing.JFrame
 	}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItemCopy;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItemClose;
     private javax.swing.JMenuItem jMenuItemOpen;
     private javax.swing.JMenuItem jMenuItemPrevious;

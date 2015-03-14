@@ -30,12 +30,14 @@ public class MultiLineTableCellRenderer extends JPanel
 
 	private final List<List<Integer>> rowColHeight = new ArrayList<> ();
 	private int highlighted;
+	private boolean buttonsVisible;
 
 	private final JTextArea textArea;
 	private final JButton button;
 
 	public MultiLineTableCellRenderer ()
 	{
+		buttonsVisible = false;
 		textArea = new JTextArea ();
 		textArea.setLineWrap (true);
 		textArea.setWrapStyleWord (true);
@@ -80,10 +82,11 @@ public class MultiLineTableCellRenderer extends JPanel
 
 		setLayout (new BorderLayout ());
 		add (textArea, BorderLayout.CENTER);
-		if (column == 1)
-			add (button, BorderLayout.EAST);
-		else
-			remove (button);
+		if (buttonsVisible)
+			if (column == 1)
+				add (button, BorderLayout.EAST);
+			else
+				remove (button);
 
 		adjustRowHeight (table, row, column);
 		return this;
@@ -92,6 +95,12 @@ public class MultiLineTableCellRenderer extends JPanel
 	public void setHighlightedRow (int c)
 	{
 		highlighted = c;
+	}
+
+	public void setButtonsvisible (boolean b)
+	{
+		buttonsVisible = b;
+		remove (button);
 	}
 
 	/**

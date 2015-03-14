@@ -141,6 +141,11 @@ public class JPanelClassView extends javax.swing.JPanel
 		model.setValueAt (a, map.get (st), 1);
 	}
 	
+	public void setButtonsVisible (boolean b)
+	{
+		((MultiLineTableCellRenderer) jTableClass.getDefaultRenderer (String.class)).setButtonsvisible (b);
+	}
+	
 	public class ForcedListSelectionModel extends DefaultListSelectionModel
 	{
 		

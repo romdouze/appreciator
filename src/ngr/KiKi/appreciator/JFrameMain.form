@@ -50,10 +50,13 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemPreviousActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem2">
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="jCheckBoxMenuItemCopy">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Options..."/>
+                <Property name="text" type="java.lang.String" value="Boutons &apos;copier&apos; visibles"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBoxMenuItemCopyActionPerformed"/>
+              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>
