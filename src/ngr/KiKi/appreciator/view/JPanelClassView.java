@@ -144,6 +144,7 @@ public class JPanelClassView extends javax.swing.JPanel
 	public void setButtonsVisible (boolean b)
 	{
 		((MultiLineTableCellRenderer) jTableClass.getDefaultRenderer (String.class)).setButtonsvisible (b);
+		jTableClass.repaint ();
 	}
 	
 	public class ForcedListSelectionModel extends DefaultListSelectionModel
