@@ -8,7 +8,6 @@ package ngr.KiKi.appreciator.data;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import ngr.KiKi.appreciator.JFrameMain;
 
 /**
  *
@@ -40,4 +39,8 @@ public class Utils
 		Clipboard clpbrd = Toolkit.getDefaultToolkit ().getSystemClipboard ();
 		clpbrd.setContents (ss, null);
 	}
+
+	public static String implementationTitle = "Appreciator";
+	public static String builtDate = "";
+	public static String builtBy = "Romain Mouchel-Vallon";
 }

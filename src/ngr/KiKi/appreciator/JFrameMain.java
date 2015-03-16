@@ -13,13 +13,21 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Properties;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -27,8 +35,10 @@ import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import ngr.KiKi.appreciator.data.Student;
+import ngr.KiKi.appreciator.data.Utils;
 import ngr.KiKi.appreciator.data.XLSHelper;
 import ngr.KiKi.appreciator.view.Appreciation;
+import ngr.KiKi.appreciator.view.JPanelAbout;
 import ngr.KiKi.appreciator.view.JPanelClassView;
 import ngr.KiKi.appreciator.view.JPanelSingleView;
 import ngr.KiKi.appreciator.view.JPanelTabbedView;
@@ -39,23 +49,23 @@ import ngr.KiKi.appreciator.view.JPanelTabbedView;
  */
 public class JFrameMain extends javax.swing.JFrame
 {
-	
+
 	private XLSHelper book;
 	private static Properties properties;
 	private ArrayList<Student> list;
 	private Student current;
 	private ArrayList<Appreciation> appreciations;
-	
+
 	private static final String PROPERTIES_FILENAME = "appreciator.properties";
 	private static final String PROPERTIES_APPRECIATIONS_FILE = "appreciator.appreciationsFile";
 	private static final String PROPERTIES_RECENT_PATH = "appreciator.recentPath";
-	
+
 	private JPanelTabbedView mainPanel;
 	private JTabbedPane jTabbedPane;
 	private JPanelSingleView singlePanel;
 	private JPanelClassView classPanel;
 	private static JLabel jLabelStatus;
-	
+
 	private boolean arrows;
 
 	/**
@@ -64,10 +74,10 @@ public class JFrameMain extends javax.swing.JFrame
 	public JFrameMain ()
 	{
 		initComponents ();
-		
+
 		init ();
 	}
-	
+
 	private void init ()
 	{
 		properties = new Properties ();
@@ -85,58 +95,104 @@ public class JFrameMain extends javax.swing.JFrame
 		{
 			Logger.getLogger (XLSHelper.class.getName ()).log (Level.SEVERE, null, ex);
 		}
-		
+
+		setVersion (JFrameMain.class);
+
 		book = XLSHelper.getInstance ();
 		list = new ArrayList<> ();
 		appreciations = book.loadAppreciations (properties.getProperty (PROPERTIES_APPRECIATIONS_FILE));
 		arrows = false;
-		
+
 		setTitle ("Appreciator");
-		
+
 		jMenuItemPrevious.setEnabled (false);
-		
+
 		this.setLayout (new BorderLayout ());
-		
+
 		jTabbedPane = new JTabbedPane ();
 		jTabbedPane.addTab ("Elèves", new JPanel ());
 		jTabbedPane.addTab ("Classe", new JPanel ());
 		this.add (jTabbedPane, BorderLayout.CENTER);
-		
+
 		singlePanel = new JPanelSingleView (this, current = new Student ());
-		
+
 		addStatusBar ();
-		
+
 		classPanel = new JPanelClassView (this);
 		jTabbedPane.setComponentAt (1, classPanel);
 	}
-	
+
+	private void setVersion (Class classe)
+	{
+		String version;
+		String shortClassName = classe.getName ().substring (classe.getName ().lastIndexOf (".") + 1);
+		try
+		{
+			ClassLoader cl = this.getClass ().getClassLoader ();
+			String threadContexteClass = classe.getName ().replace ('.', '/');
+			URL url = cl.getResource (threadContexteClass + ".class");
+			if (url == null)
+				version = shortClassName + " $ (no manifest)";
+			else
+			{
+				String path = url.getPath ();
+				String jarExt = ".jar";
+				int index = path.indexOf (jarExt);
+				SimpleDateFormat sdf = new SimpleDateFormat ("dd/MM/yyyy HH:mm:ss");
+				if (index != -1)
+				{
+					String jarPath = path.substring (0, index + jarExt.length ());
+					File file = new File (jarPath);
+					String jarVersion = file.getName ();
+					JarFile jarFile = new JarFile (new File (new URI (jarPath)));
+					JarEntry entry = jarFile.getJarEntry ("META-INF/MANIFEST.MF");
+					version = shortClassName + " $ " + jarVersion.substring (0, jarVersion.length ()
+							- jarExt.length ()) + " $ "
+							+ sdf.format (new Date (entry.getTime ()));
+					jarFile.close ();
+				}
+				else
+				{
+					File file = new File (path);
+					version = shortClassName + " $ " + sdf.format (new Date (file.lastModified ()));
+				}
+			}
+		}
+		catch (URISyntaxException | IOException e)
+		{
+			version = shortClassName + " $ " + e.toString ();
+		}
+
+		Utils.builtDate = version.substring (version.lastIndexOf ("$") + 2);
+	}
+
 	private void addArrows ()
 	{
 		JPanel arrowsPanel = new JPanel ();
 		add (arrowsPanel, BorderLayout.NORTH);
 		arrowsPanel.setPreferredSize (new Dimension (getWidth (), 25));
 		arrowsPanel.setLayout (new BorderLayout ());
-		
+
 		JButton left = new JButton ("<");
 		left.addActionListener ((ae) ->
 		{
 			int i = list.indexOf (current);
 			switchStudent (list.get (i - 1 < 0 ? list.size () - 1 : i - 1));
 		});
-		
+
 		JButton right = new JButton (">");
 		right.addActionListener ((ae) ->
 		{
 			int i = list.indexOf (current);
 			switchStudent (list.get ((i + 1) % list.size ()));
 		});
-		
+
 		arrowsPanel.add (left, BorderLayout.WEST);
 		arrowsPanel.add (right, BorderLayout.EAST);
-		
+
 		arrows = true;
 	}
-	
+
 	private void addStatusBar ()
 	{
 		JPanel statusPanel = new JPanel ();
@@ -148,37 +204,37 @@ public class JFrameMain extends javax.swing.JFrame
 		jLabelStatus.setHorizontalAlignment (SwingConstants.LEFT);
 		statusPanel.add (jLabelStatus);
 	}
-	
+
 	private void switchStudent (Student s)
 	{
 		singlePanel.updateCurrentValues ();
 		singlePanel = new JPanelSingleView (this, s);
 		jTabbedPane.setComponentAt (0, singlePanel);
 		current = s;
-		
+
 		pack ();
 	}
-	
+
 	public void switchStudent (int index)
 	{
 		switchStudent (list.get (index));
 	}
-	
+
 	private void quit ()
 	{
 		System.exit (0);
 	}
-	
+
 	public void setStatus (String s)
 	{
 		jLabelStatus.setText ("Copié : " + s);
 	}
-	
+
 	public void sendToTable (Student st, String text)
 	{
 		classPanel.set (st, text);
 	}
-	
+
 	public ArrayList<Appreciation> getAppreciations ()
 	{
 		return appreciations;
@@ -262,6 +318,13 @@ public class JFrameMain extends javax.swing.JFrame
         jMenu3.setText("?");
 
         jMenuItem1.setText("A propos");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
         jMenu3.add(jMenuItem1);
 
         jMenuBar1.add(jMenu3);
@@ -290,26 +353,26 @@ public class JFrameMain extends javax.swing.JFrame
     private void jMenuItemOpenActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemOpenActionPerformed
     {//GEN-HEADEREND:event_jMenuItemOpenActionPerformed
 		JFileChooser chooser = new JFileChooser ();
-		
+
 		chooser.setFileFilter (new FileNameExtensionFilter ("Fichier Excel", "xls", "XLS"));
 		chooser.setCurrentDirectory (new File (properties.getProperty (PROPERTIES_RECENT_PATH) == null ? "" : properties.getProperty (PROPERTIES_RECENT_PATH)));
 		if (chooser.showOpenDialog (this) != JFileChooser.OPEN_DIALOG)
 			return;
-		
+
 		File file = chooser.getSelectedFile ();
 		if (!book.openBook (file))
 			return;
-		
+
 		list = book.loadStudents ();
-		
+
 		if (!arrows)
 			addArrows ();
-		
+
 		switchStudent (list.get (0));
-		
+
 		jMenuItemPrevious.setEnabled (true);
 		properties.setProperty (PROPERTIES_RECENT_PATH, file.getParent ());
-		
+
 		classPanel.load (list);
 //		mainPanel.load (list);
     }//GEN-LAST:event_jMenuItemOpenActionPerformed
@@ -317,17 +380,17 @@ public class JFrameMain extends javax.swing.JFrame
     private void jMenuItemPreviousActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemPreviousActionPerformed
     {//GEN-HEADEREND:event_jMenuItemPreviousActionPerformed
 		JFileChooser chooser = new JFileChooser ();
-		
+
 		chooser.setFileFilter (new FileNameExtensionFilter ("Fichier Excel", "xls", "XLS"));
 		chooser.setCurrentDirectory (new File (properties.getProperty (PROPERTIES_RECENT_PATH) == null ? "" : properties.getProperty (PROPERTIES_RECENT_PATH)));
 		if (chooser.showOpenDialog (this) != JFileChooser.OPEN_DIALOG)
 			return;
-		
+
 		File file = chooser.getSelectedFile ();
 		book.loadSecondaryAppreciations (file, list);
-		
+
 		switchStudent (current);
-		
+
 		properties.setProperty (PROPERTIES_RECENT_PATH, file.getParent ());
     }//GEN-LAST:event_jMenuItemPreviousActionPerformed
 
@@ -335,6 +398,15 @@ public class JFrameMain extends javax.swing.JFrame
     {//GEN-HEADEREND:event_jCheckBoxMenuItemCopyActionPerformed
 		classPanel.setButtonsVisible (jCheckBoxMenuItemCopy.isSelected ());
     }//GEN-LAST:event_jCheckBoxMenuItemCopyActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItem1ActionPerformed
+    {//GEN-HEADEREND:event_jMenuItem1ActionPerformed
+		JFrame about = new JFrame ("A propos...");
+		about.add (new JPanelAbout ());
+		about.setResizable (false);
+		about.pack ();
+		about.setVisible (true);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
 	/**
 	 * @param args the command line arguments
