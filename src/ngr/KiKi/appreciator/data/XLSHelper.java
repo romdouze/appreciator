@@ -136,7 +136,7 @@ public class XLSHelper
 		if (asheet == null)
 			return list;
 
-		for (int i = 0; i < 1500; i++)
+		for (int i = 0; i < Utils.MAX_APPRECIATIONS; i++)
 			if (rowExists (asheet, i))
 			{
 				Row r = asheet.getRow (i);
@@ -144,7 +144,7 @@ public class XLSHelper
 				if (c != null && c.getCellType () == Cell.CELL_TYPE_STRING)
 				{
 					String s = c.getStringCellValue ();
-					if (s != null && s.startsWith ("  * "))
+					if (s != null && s.startsWith (Utils.LEADING_STUFF))
 					{
 						Appreciation a = new Appreciation (Utils.removeLead (s));
 						Double T1inf = r.getCell (Indices.APPRECIATIONS_FILE_T[0]) != null && r.getCell (Indices.APPRECIATIONS_FILE_T[0]).getCellType () == Cell.CELL_TYPE_NUMERIC ? r.getCell (Indices.APPRECIATIONS_FILE_T[0]).getNumericCellValue () : 0.;

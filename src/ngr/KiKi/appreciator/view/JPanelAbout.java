@@ -64,7 +64,7 @@ public class JPanelAbout extends javax.swing.JPanel
         jLabelK2K.setText("KRA20KRA");
 
         jLabelBy.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelBy.setText("KiKi");
+        jLabelBy.setText("Romain Mouchel-Vallon");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

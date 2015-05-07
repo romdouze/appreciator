@@ -476,10 +476,10 @@ public class JPanelSingleView extends javax.swing.JPanel
     private void jButtonOKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButtonOKActionPerformed
     {//GEN-HEADEREND:event_jButtonOKActionPerformed
 		String text = jTextAreaCustom.getText ();
+		student.setAppreciation (text);
 		Utils.sendToClipboard (text);
 		parent.setStatus (text);
 		parent.sendToTable (student, text);
-		student.setAppreciation (jTextAreaCustom.getText ());
     }//GEN-LAST:event_jButtonOKActionPerformed
 
 

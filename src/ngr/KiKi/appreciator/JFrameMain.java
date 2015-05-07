@@ -6,7 +6,9 @@
 package ngr.KiKi.appreciator;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -30,8 +32,12 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
+import javax.swing.Painter;
 import javax.swing.SwingConstants;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import ngr.KiKi.appreciator.data.Student;
@@ -41,7 +47,6 @@ import ngr.KiKi.appreciator.view.Appreciation;
 import ngr.KiKi.appreciator.view.JPanelAbout;
 import ngr.KiKi.appreciator.view.JPanelClassView;
 import ngr.KiKi.appreciator.view.JPanelSingleView;
-import ngr.KiKi.appreciator.view.JPanelTabbedView;
 
 /**
  *
@@ -52,6 +57,7 @@ public class JFrameMain extends javax.swing.JFrame
 
 	private XLSHelper book;
 	private static Properties properties;
+	private JProgressBar progressBar;
 	private ArrayList<Student> list;
 	private Student current;
 	private ArrayList<Appreciation> appreciations;
@@ -60,7 +66,6 @@ public class JFrameMain extends javax.swing.JFrame
 	private static final String PROPERTIES_APPRECIATIONS_FILE = "appreciator.appreciationsFile";
 	private static final String PROPERTIES_RECENT_PATH = "appreciator.recentPath";
 
-	private JPanelTabbedView mainPanel;
 	private JTabbedPane jTabbedPane;
 	private JPanelSingleView singlePanel;
 	private JPanelClassView classPanel;
@@ -190,6 +195,11 @@ public class JFrameMain extends javax.swing.JFrame
 		arrowsPanel.add (left, BorderLayout.WEST);
 		arrowsPanel.add (right, BorderLayout.EAST);
 
+		progressBar = new JProgressBar ();
+		progressBar.setStringPainted (true);
+		progressBar.setValue (getProgress ());
+		arrowsPanel.add (progressBar, BorderLayout.CENTER);
+
 		arrows = true;
 	}
 
@@ -233,6 +243,14 @@ public class JFrameMain extends javax.swing.JFrame
 	public void sendToTable (Student st, String text)
 	{
 		classPanel.set (st, text);
+		progressBar.setValue (getProgress ());
+	}
+
+	private int getProgress ()
+	{
+		long count = list.stream ().filter (student -> !(student.getAppreciation ().isEmpty ())).count ();
+
+		return (int) ((count * 100) / list.size ());
 	}
 
 	public ArrayList<Appreciation> getAppreciations ()

@@ -16,7 +16,8 @@ import java.awt.datatransfer.StringSelection;
 public class Utils
 {
 
-	private static String LEADING_STUFF = "  * ";
+	public final static String LEADING_STUFF = "  * "; // Balise qui précéde chaque appréciation dans le fichier
+	public final static int MAX_APPRECIATIONS = 1500; // Nombre arbitraire de lignes à parcourir dans le fichier
 
 	public static int countOccurences (String s, char c)
 	{

@@ -13,6 +13,7 @@
     <target name="-post-jar"> 
         <copy file="Appreciations.xls" flatten="true" todir="${dist.dir}"/>
         <copy file = "appreciator.properties" flatten = "true" todir="${dist.dir}"/>
+        <copy file = "Classe Test.xls" flatten = "true" todir="${dist.dir}"/>
     </target> 
     <!--
 
