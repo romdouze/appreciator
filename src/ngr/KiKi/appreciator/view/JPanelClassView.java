@@ -25,9 +25,9 @@ import ngr.KiKi.appreciator.data.Utils;
  */
 public class JPanelClassView extends javax.swing.JPanel
 {
-	
+
 	private Map<Student, Integer> map;
-	
+
 	private final JFrameMain parent;
 	private DefaultTableModel model;
 
@@ -37,12 +37,12 @@ public class JPanelClassView extends javax.swing.JPanel
 	public JPanelClassView (JFrameMain p)
 	{
 		initComponents ();
-		
+
 		parent = p;
-		
+
 		init ();
 	}
-	
+
 	private void init ()
 	{
 		map = new HashMap<> ();
@@ -51,14 +51,14 @@ public class JPanelClassView extends javax.swing.JPanel
 		jTableClass.setDefaultRenderer (String.class, new MultiLineTableCellRenderer ());
 		jTableClass.setCursor (new Cursor (Cursor.HAND_CURSOR));
 		jTableClass.setToolTipText ("Copier appréciation");
-		
+
 		MouseAdapter mouseAdapter = new MouseAdapter ()
 		{
 			private int[] previous = new int[]
 			{
 				-1, -1
 			};
-			
+
 			private int[] cellAtPoint (Point p)
 			{
 				return new int[]
@@ -66,21 +66,21 @@ public class JPanelClassView extends javax.swing.JPanel
 					jTableClass.rowAtPoint (p), jTableClass.columnAtPoint (p)
 				};
 			}
-			
+
 			@Override
 			public void mouseMoved (MouseEvent me)
 			{
 				int[] cell = cellAtPoint (me.getPoint ());
-				
+
 				if (cell[0] != previous[0])
 				{
 					((MultiLineTableCellRenderer) jTableClass.getDefaultRenderer (String.class)).setHighlightedRow (cell[0]);
 					repaint ();
 				}
-				
+
 				previous = cell;
 			}
-			
+
 			@Override
 			public void mouseClicked (MouseEvent me)
 			{
@@ -96,29 +96,29 @@ public class JPanelClassView extends javax.swing.JPanel
 					}
 				}
 			}
-			
+
 			@Override
 			public void mouseExited (MouseEvent me)
 			{
 				((MultiLineTableCellRenderer) jTableClass.getDefaultRenderer (String.class)).setHighlightedRow (-1);
 				repaint ();
 			}
-			
+
 			@Override
 			public void mouseReleased (MouseEvent me)
 			{
 				mouseClicked (me);
 			}
 		};
-		
+
 		jTableClass.addMouseListener (mouseAdapter);
 		jTableClass.addMouseMotionListener (mouseAdapter);
 	}
-	
+
 	public void load (ArrayList<Student> list)
 	{
 		clear ();
-		
+
 		list.stream ().forEach ((st) ->
 		{
 			model.addRow (new String[]
@@ -127,39 +127,39 @@ public class JPanelClassView extends javax.swing.JPanel
 			});
 			map.put (st, model.getRowCount () - 1);
 		});
-		
+
 	}
-	
+
 	public void clear ()
 	{
 		map.clear ();
 		model.setRowCount (0);
 	}
-	
+
 	public void set (Student st, String a)
 	{
 		model.setValueAt (a, map.get (st), 1);
 	}
-	
+
 	public void setButtonsVisible (boolean b)
 	{
 		((MultiLineTableCellRenderer) jTableClass.getDefaultRenderer (String.class)).setButtonsvisible (b);
 		jTableClass.repaint ();
 	}
-	
+
 	public class ForcedListSelectionModel extends DefaultListSelectionModel
 	{
-		
+
 		public ForcedListSelectionModel ()
 		{
 			setSelectionMode (ListSelectionModel.SINGLE_SELECTION);
 		}
-		
+
 		@Override
 		public void clearSelection ()
 		{
 		}
-		
+
 		@Override
 		public void removeSelectionInterval (int index0, int index1)
 		{
